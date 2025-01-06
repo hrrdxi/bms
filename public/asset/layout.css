@@ -1,0 +1,50 @@
+.sidebar {
+    background-color: #FFFFFF;
+    width: 270px;
+    height: 100vh;
+    color: #6FAF4A;
+    position: fixed;
+    transition: width 0.3s ease;
+}
+
+.sidebar .nav-link {
+    font-size: 16px;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    color: #6FAF4A;
+}
+
+.sidebar .nav-link.active {
+    background-color: #6FAF4A;
+    color: #FFFFFF;
+    border-radius: 5px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #6FAF4A;
+    color: #ffffff;
+}
+
+.sidebar .dropdown-icon {
+    transition: transform 0.3s ease;
+}
+
+.sidebar .rotate-icon {
+    transform: rotate(0deg);
+}
+
+.sidebar .dropdown-toggle[aria-expanded="true"] .dropdown-icon {
+    transform: rotate(180deg); /* Ikon berputar 180 derajat saat dropdown terbuka */
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    .content-wrapper {
+        margin-left: 0;
+    }
+}
