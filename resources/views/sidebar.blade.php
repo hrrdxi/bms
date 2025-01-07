@@ -10,7 +10,7 @@
         <ul class="list-unstyled components mb-5">
             <!-- Dashboard without dropdown -->
             <li class="active">
-                <a href="{{ url('/') }}"><span class="fa fa-home mr-3"></span> Dashboard</a>
+                <a href="{{ url('home') }}"><span class="fa fa-home mr-3"></span> Dashboard</a>
             </li>
             
             <!-- Tabungan Nasabah Dropdown -->
