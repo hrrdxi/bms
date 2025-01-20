@@ -16,6 +16,10 @@ class Setoran extends Model
         'kelas', 'tanggal_transaksi', 'jumlah_setoran'
     ];
 
+    protected $casts = [
+        'tanggal_transaksi' => 'datetime', // Cast kolom ini menjadi datetime
+    ];
+    
     /**
      * Relasi: Setoran dimiliki oleh satu nasabah.
      */
@@ -23,6 +27,11 @@ class Setoran extends Model
     {
         return $this->belongsTo(Nasabah::class);
     }
+    public function user()
+    {
+    return $this->belongsTo(User::class);
+    }
+
 
     /**
      * Tambahkan jumlah setoran ke saldo nasabah saat setoran dibuat.

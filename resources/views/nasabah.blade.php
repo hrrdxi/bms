@@ -1,3 +1,4 @@
+{{-- nasabah.blade.php --}}
 @extends('layouts.main')
 
 @section('content')
@@ -110,11 +111,15 @@
                         <td>{{ $nasabah->no_identitas }}</td>
                         <td>{{ $nasabah->no_telepon }}</td>
                         <td>
-                            {{ $nasabah->kelas }} {{ $nasabah->jurusan }}
-                            @if(!is_null($nasabah->angka_kelas) && $nasabah->angka_kelas !== 'tidak ada')
-                                {{ $nasabah->angka_kelas }}
+                            @if($nasabah->jurusan === null)
+                                {{ $nasabah->kelas }}
+                            @else
+                                {{ $nasabah->kelas }} {{ $nasabah->jurusan }}
+                                @if(!is_null($nasabah->angka_kelas) && $nasabah->angka_kelas !== 'Tidak Ada')
+                                    {{ $nasabah->angka_kelas }}
+                                @endif
                             @endif
-                        </td>                                                                 
+                        </td>                                                                
                         <td>Rp. {{ number_format($nasabah->saldo, 0, ',', '.') }}</td>
                         <td class="action-buttons">
                             <a href="{{ route('nasabah.show', $nasabah->id) }}" class="btn btn-info btn-sm btn-action">

@@ -1,3 +1,4 @@
+{{-- setoran.blade.php --}}
 @extends('layouts.main')
 
 @section('content')
@@ -5,38 +6,33 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <head>
     <style>
-        /* Table should take full width of the screen and adjust column widths based on content */
+        /* Existing styles */
         .table {
             width: 100%;
-            table-layout: auto; /* Allows the table to adjust column width based on content */
-            font-size: 14px; /* Slightly smaller font size for better fit */
+            table-layout: auto;
+            font-size: 14px;
         }
 
-        /* Adjust header styles */
         .table thead {
             background-color: #00a1e0;
             color: white;
         }
 
-        /* Ensure text is visible and doesn't wrap unnecessarily */
         .table td, .table th {
-            white-space: nowrap; /* Prevent text from wrapping */
-            padding: 5px; /* Decrease padding for more space */
+            white-space: nowrap;
+            padding: 5px;
         }
 
-        /* Ensures that action buttons fit nicely and aren't too close */
         .table .action-buttons {
             display: flex;
             justify-content: center;
-            gap: 8px; /* Adjust gap between buttons */
+            gap: 8px;
         }
 
-        /* Hover effect for rows */
         .table tbody tr:hover {
             background-color: #e6f7ff;
         }
 
-        /* Style pagination */
         .pagination a, .pagination span {
             background-color: #00a1e0;
             color: white;
@@ -52,38 +48,52 @@
             border-radius: 25px;
         }
 
-        .pagination .active span, .pagination .page-item.disabled span {
-            pointer-events: none;
+        /* New styles for popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
         }
 
-        /* Responsive adjustments for mobile devices */
+        .popup-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1051;
+            min-width: 300px;
+        }
+
+        .popup-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
         @media (max-width: 768px) {
             .table td, .table th {
                 font-size: 12px;
                 padding: 3px;
             }
 
-            /* Stack buttons vertically on smaller screens */
             .table .action-buttons {
                 flex-direction: column;
                 gap: 4px;
             }
 
-            /* Make button text smaller */
             .btn-action {
                 font-size: 12px;
                 padding: 3px 8px;
-            }
-
-            /* Smaller pagination controls */
-            .pagination a, .pagination span {
-                padding: 3px 8px;
-                font-size: 12px;
-            }
-
-            /* Ensure pagination and button container wrap properly */
-            .d-flex {
-                flex-wrap: wrap;
             }
         }
     </style>
@@ -95,6 +105,24 @@
     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
+        </div>
+
+        <!-- Popup for printing slip after successful creation -->
+        <div class="popup-overlay" id="printPopup">
+            <div class="popup-content">
+                <h4 class="text-center mb-3">Setoran Berhasil Ditambahkan!</h4>
+                <p class="text-center mb-4">Apakah Anda ingin mencetak slip setoran sekarang?</p>
+                <div class="popup-buttons">
+                    <a href="{{ route('setoran.print-slip', ['id' => session('last_setoran_id')]) }}" 
+                       class="btn btn-primary">
+                        <i class="fas fa-print me-1"></i> Cetak Slip
+                    </a>
+                    <button class="btn btn-secondary" 
+                            onclick="document.getElementById('printPopup').style.display='none'">
+                        Nanti Saja
+                    </button>
+                </div>
+            </div>
         </div>
     @endif
 
@@ -140,13 +168,20 @@
                         <td>{{ \Carbon\Carbon::parse($setoran->tanggal_transaksi)->format('d F Y') }}</td>
                         <td>Rp. {{ number_format($setoran->jumlah_setoran, 0, ',', '.') }}</td>
                         <td class="action-buttons">
-                            <a href="{{ route('setoran.edit', $setoran->id) }}" class="btn btn-warning btn-sm btn-action">
+                            <a href="{{ route('setoran.download-slip', $setoran->id) }}" 
+                               class="btn btn-info btn-sm btn-action">
+                                <i class="fas fa-download"></i> Slip
+                            </a>
+                            <a href="{{ route('setoran.edit', $setoran->id) }}" 
+                               class="btn btn-warning btn-sm btn-action">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
-                            <form action="{{ route('setoran.destroy', $setoran->id) }}" method="POST" class="d-inline">
+                            <form action="{{ route('setoran.destroy', $setoran->id) }}" 
+                                  method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-danger btn-sm btn-action" onclick="return confirm('Yakin ingin menghapus?')">
+                                <button class="btn btn-danger btn-sm btn-action" 
+                                        onclick="return confirm('Yakin ingin menghapus?')">
                                     <i class="fas fa-trash-alt"></i> Hapus
                                 </button>
                             </form>
@@ -157,7 +192,6 @@
         </table>
     </div>
 
-    <!-- Tampilkan pagination control -->
     <div class="d-flex justify-content-between align-items-center flex-wrap mt-3">
         <div class="mb-2">
             Menampilkan {{ $setorans->firstItem() }} sampai {{ $setorans->lastItem() }} dari {{ $setorans->total() }} entri
@@ -181,4 +215,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Show print popup if success message exists
+    @if(session('success') && session('last_setoran_id'))
+        document.getElementById('printPopup').style.display = 'block';
+    @endif
+</script>
 @endsection

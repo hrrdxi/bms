@@ -25,7 +25,13 @@ class Nasabah extends Model
         'angka_kelas',
     ];
     
-
+    /**
+     * Relasi dengan model Saldo
+     */
+    public function saldo()
+    {
+        return $this->hasOne(Saldo::class, 'nasabah_id', 'id');
+    }    
     // Relasi ke model Setoran
     public function setorans()
     {

@@ -12,24 +12,23 @@ class Penarikan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_penarikan',
-        'nasabah_id',
-        'nama_nasabah',
-        'kelas',
-        'keterangan_penarikan',
-        'tanggal_penarikan',
-        'jumlah_penarikan',
-        'amount',
-        'user_id',
+        'id_penarikan', 'nasabah_id', 'nama_nasabah', 'kelas',
+        'keterangan_penarikan', 'tanggal_penarikan', 'jumlah_penarikan' , 'user_id', 'amount',
     ];
-    
 
+    protected $casts = [
+        'tanggal_penarikan' => 'datetime', // Cast kolom ini menjadi datetime
+    ];    
     /**
      * Relasi: Penarikan dimiliki oleh satu nasabah.
      */
     public function nasabah()
     {
         return $this->belongsTo(Nasabah::class);
+    }
+    public function user()
+    {
+    return $this->belongsTo(User::class);
     }
 
     /**
@@ -48,4 +47,5 @@ class Penarikan extends Model
             }
         });
     }
+
 }

@@ -5,88 +5,124 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <head>
     <style>
-        /* Basic table styling */
+        /* Existing styles */
         .table {
             width: 100%;
             table-layout: auto;
             font-size: 14px;
         }
+
         .table thead {
             background-color: #00a1e0;
             color: white;
         }
+
         .table td, .table th {
             white-space: nowrap;
             padding: 5px;
         }
+
         .table .action-buttons {
             display: flex;
             justify-content: center;
             gap: 8px;
         }
+
         .table tbody tr:hover {
             background-color: #e6f7ff;
         }
 
-        /* Pagination styling */
         .pagination a, .pagination span {
             background-color: #00a1e0;
             color: white;
-            padding: 5px 15px;
+            padding: 5px 10px;
             margin: 2px;
             border-radius: 12px;
+            text-decoration: none;
             transition: background-color 0.3s, border-radius 0.3s;
         }
+
         .pagination a:hover, .pagination .active span {
             background-color: #007bbd;
             border-radius: 25px;
         }
-        .pagination .active span, .pagination .page-item.disabled span {
-            pointer-events: none;
+
+        /* New styles for popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
         }
 
-        /* Responsive adjustments for mobile devices */
+        .popup-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1051;
+            min-width: 300px;
+        }
+
+        .popup-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
         @media (max-width: 768px) {
-            /* Adjust table font size and padding */
             .table td, .table th {
                 font-size: 12px;
                 padding: 3px;
             }
 
-            /* Stack action buttons vertically on smaller screens */
             .table .action-buttons {
                 flex-direction: column;
                 gap: 4px;
             }
 
-            /* Smaller button text and padding */
             .btn-action {
                 font-size: 12px;
                 padding: 3px 8px;
-            }
-
-            /* Smaller pagination controls */
-            .pagination a, .pagination span {
-                padding: 3px 8px;
-                font-size: 12px;
-            }
-
-            /* Ensure pagination and button container wrap properly */
-            .d-flex {
-                flex-wrap: wrap;
             }
         }
     </style>
 </head>
 
-<div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Penarikan Uang</h1>
 
     @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+
+    <!-- Popup for printing slip after successful creation -->
+    <div class="popup-overlay" id="printPopup">
+        <div class="popup-content">
+            <h4 class="text-center mb-3">Penarikan Berhasil Ditambahkan!</h4>
+            <p class="text-center mb-4">Apakah Anda ingin mencetak slip penarikan sekarang?</p>
+            <div class="popup-buttons">
+                <a href="{{ route('penarikan.print-slip', ['id' => session('last_penarikan_id')]) }}" 
+                   class="btn btn-primary">
+                    <i class="fas fa-print me-1"></i> Cetak Slip
+                </a>
+                <button class="btn btn-secondary" 
+                        onclick="document.getElementById('printPopup').style.display='none'">
+                    Nanti Saja
+                </button>
+            </div>
         </div>
-    @endif
+    </div>
+@endif
 
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <div class="mb-2">
@@ -131,6 +167,10 @@
                         <td>{{ \Carbon\Carbon::parse($penarikan->tanggal_penarikan)->format('d F Y') }}</td>
                         <td>Rp. {{ number_format($penarikan->jumlah_penarikan, 0, ',', '.') }}</td>
                         <td class="action-buttons">
+                            <a href="{{ route('penarikan.download-slip', $penarikan->id) }}" 
+                                class="btn btn-info btn-sm btn-action">
+                                 <i class="fas fa-download"></i> Slip
+                             </a>
                             <a href="{{ route('penarikan.edit', $penarikan->id) }}" class="btn btn-warning btn-sm btn-action">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
@@ -172,4 +212,10 @@
         </div>
     </div>
 </div>
+<script>
+    // Show print popup if success message exists
+    @if(session('success') && session('last_penarikan_id'))
+        document.getElementById('printPopup').style.display = 'block';
+    @endif
+</script>
 @endsection

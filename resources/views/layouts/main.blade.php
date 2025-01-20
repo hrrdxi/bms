@@ -16,9 +16,9 @@
 
         <!-- Page Content -->
         <div id="content" class="p-4 p-md-5 pt-5">
+            <!-- Yield Content -->
             @yield('content')
         </div>
-        
     </div>
 
     <script src="{{ asset('template/js/jquery.min.js') }}"></script>

@@ -227,7 +227,8 @@
 
 <style>
     .content-wrapper {
-        margin-left: 250px; /* Adjust based on your sidebar width */
+        margin: 0; /* Hilangkan margin kiri */
+        padding-left: 0;
         transition: margin-left 0.3s ease-in-out;
     }
 
@@ -291,6 +292,6 @@
             correctLevel: QRCode.CorrectLevel.H
         });
     });
-</script>
+</script>   
 @endpush
 @endsection

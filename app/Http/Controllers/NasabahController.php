@@ -4,11 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Nasabah;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Dompdf\Options;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Dompdf\Dompdf;
-use Dompdf\Options as DompdfOptions;
 
 class NasabahController extends Controller
 {
@@ -64,11 +61,12 @@ class NasabahController extends Controller
         return redirect()->back()->withErrors(['no_identitas' => 'Nomor identitas sudah digunakan!']);
     }
 
-    $fotoKartuPelajarPath = $request->file('foto_kartu_pelajar')->store('path/to/student_card', 'public');
     if ($request->hasFile('foto_kartu_pelajar')) {
-        $fotoKartuPelajarPath = $request->file('foto_kartu_pelajar')->store('foto_kartu_pelajar', 'public');
-    } else {
-        return redirect()->back()->withErrors(['foto_kartu_pelajar' => 'Gagal mengunggah foto.']);
+        $fotoKartuPelajarPath = $request->file('foto_kartu_pelajar')
+            ->store('foto_kartu_pelajar', 'public');
+        
+        // Simpan path relatif tanpa 'public/'
+        $data['foto_kartu_pelajar'] = str_replace('public/', '', $fotoKartuPelajarPath);
     }
 
     // Tentukan prefix ID Nasabah berdasarkan jurusan
@@ -162,28 +160,14 @@ class NasabahController extends Controller
 
     public function downloadCard(Nasabah $nasabah)
 {
-    // Set PDF options with dompdf
-    $options = new Options();
-    $dompdf = new Dompdf($options);
-    $options->set('isHtml5ParserEnabled', true);
-    $options->set('isRemoteEnabled', true);
-    $options->set('defaultFont', 'dejavu sans');
-
-    // Create PDF instance with options
-    PDF::setOptions([
-        'isHtml5ParserEnabled' => true,
-        'isRemoteEnabled' => true,
-        'defaultFont' => 'dejavu sans'
-    ]);
-
     // Generate verification URL
     $verificationUrl = route('nasabah.verify', ['id' => base64_encode($nasabah->id)]);
     
-    // Generate QR Code with proper size and format
+    // Generate QR Code
     $qrCode = QrCode::format('svg')
-                    ->size(300)  // Increased size for better scanning
-                    ->margin(1)  // Minimal margin
-                    ->errorCorrection('H') // High error correction
+                    ->size(300)
+                    ->margin(1)
+                    ->errorCorrection('H')
                     ->generate($verificationUrl);
 
     // Convert SVG QR code to base64
@@ -196,26 +180,31 @@ class NasabahController extends Controller
         $logoData = base64_encode(file_get_contents($logoPath));
     }
 
-    // Load view and generate PDF
-    $pdf = Pdf::loadView('nasabah.identity-card', [
+    // Create PDF dengan options yang benar
+    $pdf = PDF::loadView('nasabah.identity-card', [
         'nasabah' => $nasabah,
         'qrCode' => $qrCode,
         'logoData' => $logoData,
         'verificationUrl' => $verificationUrl
+    ])->setOptions([
+        'isHtml5ParserEnabled' => true,
+        'isRemoteEnabled' => true,
+        'defaultFont' => 'dejavu sans',
+        'enable-local-file-access' => true,
+        'chroot' => public_path(),
+        'margin-top' => 0,
+        'margin-right' => 0,
+        'margin-bottom' => 0,
+        'margin-left' => 0
     ]);
 
-    // Configure PDF size and orientation
+    // Set paper size untuk kartu ID (dalam mm)
     $pdf->setPaper([0, 0, 242.64, 153.07], 'landscape');
-    $pdf->setOption('enable-local-file-access', true);
-    $pdf->setOption('margin-top', 0);
-    $pdf->setOption('margin-right', 0);
-    $pdf->setOption('margin-bottom', 0);
-    $pdf->setOption('margin-left', 0);
 
     // Generate filename
     $filename = 'kartu-nasabah-' . $nasabah->id_nasabah . '.pdf';
 
-    // Return PDF for download
+    // Return PDF untuk download
     return $pdf->stream($filename);
 }
 public function showQRDetail($encrypted_id)
@@ -243,4 +232,5 @@ public function verify($encodedId)
         abort(404, 'Data nasabah tidak ditemukan');
     }
 }
+
 }

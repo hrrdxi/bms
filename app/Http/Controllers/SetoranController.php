@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Setoran;
 use App\Models\Nasabah;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class SetoranController extends Controller
 {
@@ -34,26 +35,16 @@ class SetoranController extends Controller
     
         // Mendapatkan tanggal dan waktu transaksi sesuai zona waktu Asia/Jakarta (WIB)
         $tanggal = \Carbon\Carbon::parse($request->tanggal_transaksi, 'Asia/Jakarta');
-    
-        // Mendapatkan waktu saat ini sesuai dengan WIB
-        $jam_sekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('Hi'); // Format HHMM (Jam:Menit) sesuai WIB
-    
-        // Format tanggal, bulan, dan dua digit tahun dari tanggal transaksi
-        $tanggal_transaksi = $tanggal->format('dmy'); // Format ddmmyy (misal: 041124)
-    
-        // Kombinasi untuk ID Setoran: ST-HHMMDDMMYY
-        $prefix = 'ST-' . $jam_sekarang . $tanggal_transaksi; // Contoh: ST-1213041124
-    
-        // Menghitung jumlah transaksi pada tanggal yang sama
+        $jam_sekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('Hi');
+        $tanggal_transaksi = $tanggal->format('dmy');
+        $prefix = 'ST-' . $jam_sekarang . $tanggal_transaksi;
         $count = Setoran::whereDate('tanggal_transaksi', $tanggal->toDateString())->count() + 1;
-    
-        // Tambahkan angka urut (contoh: ST-1213041124-001, ST-1213041124-002)
         $id_setoran = $prefix . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
     
-        // Simpan setoran baru dengan ID setoran yang sudah di-generate
-        Setoran::create([
+        // Simpan setoran
+        $setoran = Setoran::create([
             'nasabah_id' => $request->nasabah_id,
-            'id_setoran' => $id_setoran, // Set otomatis
+            'id_setoran' => $id_setoran,
             'nama_nasabah' => $request->nama_nasabah,
             'id_nasabah' => $request->id_nasabah,
             'kelas' => $request->kelas,
@@ -61,15 +52,13 @@ class SetoranController extends Controller
             'jumlah_setoran' => $request->jumlah_setoran,
         ]);
     
-        // Redirect dengan pesan sukses dan nomor setoran
-        return redirect()->route('setoran.index')->with('success', 'Setoran berhasil ditambahkan dengan ID: ' . $id_setoran);
+        return redirect()->route('setoran.index')
+            ->with('success', 'Setoran berhasil ditambahkan dengan ID: ' . $id_setoran)
+            ->with('last_setoran_id', $setoran->id);
     }
-    
-    
 
     public function edit(Setoran $setoran)
     {
-        // Mengarahkan ke views/setoran/edit.blade.php
         return view('setoran.edit', compact('setoran'));
     }
 
@@ -85,14 +74,26 @@ class SetoranController extends Controller
         ]);
 
         $setoran->update($request->all());
-
         return redirect()->route('setoran.index')->with('success', 'Setoran berhasil diperbarui.');
     }
 
     public function destroy(Setoran $setoran)
     {
         $setoran->delete();
-
         return redirect()->route('setoran.index')->with('success', 'Setoran berhasil dihapus.');
     }
-} 
+
+    public function downloadSlip($id)
+    {
+        $setoran = Setoran::findOrFail($id);
+        $pdf = PDF::loadView('setoran.slip', compact('setoran'));
+        return $pdf->download('slip-setoran-' . $setoran->id_setoran . '.pdf');
+    }
+
+    public function printSlip($id)
+    {
+        $setoran = Setoran::findOrFail($id);
+        $pdf = PDF::loadView('setoran.slip', compact('setoran'));
+        return $pdf->stream('slip-setoran-' . $setoran->id_setoran . '.pdf');
+    }
+}
