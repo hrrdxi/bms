@@ -33,23 +33,25 @@ class PenarikanController extends Controller
         ]);
     
         // Mendapatkan tanggal penarikan
-        $tanggal = \Carbon\Carbon::parse($request->tanggal_penarikan, 'Asia/Jakarta'); // Menggunakan waktu WIB
+        $tanggal = \Carbon\Carbon::parse($request->tanggal_penarikan, 'Asia/Jakarta');
     
-        // Format ID Penarikan: PN-HHMMDDMMYY (contoh: PN-1215041124)
-        $jam_sekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('Hi'); // Format HHMM (Jam dan Menit) sesuai WIB
-        $tanggal_transaksi = $tanggal->format('dmy'); // Format ddmmyy (misal: 041124)
+        // Format ID Penarikan
+        $jam_sekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('Hi');
+        $tanggal_transaksi = $tanggal->format('dmy');
+        $prefix = 'PN-' . $jam_sekarang . $tanggal_transaksi;
     
-        // Kombinasi untuk ID Penarikan
-        $prefix = 'PN-' . $jam_sekarang . $tanggal_transaksi; // Menghasilkan ID seperti PN-1215041124
-    
-        // Menghitung jumlah penarikan yang ada pada tanggal tersebut
+        // Hitung jumlah penarikan pada tanggal tersebut
         $count = Penarikan::whereDate('tanggal_penarikan', $tanggal->toDateString())->count() + 1;
     
-        // Membuat ID Penarikan dengan format: PN-HHMMDDMMYY-001
+        // Buat ID Penarikan
         $id_penarikan = $prefix . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
     
-        // Simpan penarikan baru dengan ID Penarikan yang sudah di-generate
-        Penarikan::create(array_merge($validated, ['id_penarikan' => $id_penarikan]));
+        // Simpan penarikan baru
+        Penarikan::create(array_merge($validated, [
+            'id_penarikan' => $id_penarikan,
+            'user_id' => auth()->id(),
+            'amount' => $request->jumlah_penarikan, // Masukkan jumlah_penarikan ke field amount
+        ]));
     
         // Redirect dengan pesan sukses
         return redirect()->route('penarikan.index')->with('success', 'Penarikan berhasil ditambahkan dengan ID: ' . $id_penarikan);

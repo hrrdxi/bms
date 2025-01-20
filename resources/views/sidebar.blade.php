@@ -10,7 +10,7 @@
         <ul class="list-unstyled components mb-5">
             <!-- Dashboard without dropdown -->
             <li class="active">
-                <a href="{{ url('home') }}"><span class="fa fa-home mr-3"></span> Dashboard</a>
+                <a href="{{ url('/dashboard') }}"><span class="fa fa-home mr-3"></span> Dashboard</a>
             </li>
             
             <!-- Tabungan Nasabah Dropdown -->
@@ -40,16 +40,6 @@
                 <a href="{{ url('data-lain') }}"><span class="fa fa-cogs mr-3"></span> Data Lain</a>
             </li>
         </ul>
-        
-        <div class="mb-5">
-            <h3 class="h6 mb-3">Subscribe for newsletter</h3>
-            <form action="#" class="subscribe-form">
-                <div class="form-group d-flex">
-                    <div class="icon"><span class="icon-paper-plane"></span></div>
-                    <input type="text" class="form-control" placeholder="Enter Email Address">
-                </div>
-            </form>
-        </div>
         
         <div class="footer">
             <p>&copy; <script>document.write(new Date().getFullYear());</script> All rights reserved | Made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib.com</a></p>

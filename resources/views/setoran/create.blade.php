@@ -1,6 +1,14 @@
 @extends('layouts.main')
 
 @section('content')
+<head>
+    <!-- Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+</head>
+
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Tambah Setoran Masuk</h1>
 
@@ -16,7 +24,7 @@
 
     <form action="{{ route('setoran.store') }}" method="POST">
         @csrf
-        <!-- Dropdown to select a Nasabah -->
+        <!-- Input field with Select2 for searchable dropdown -->
         <div class="form-group">
             <label>Pilih Nasabah</label>
             <select name="nasabah_id" id="nasabah_id" class="form-control" required onchange="populateNasabahData()">
@@ -45,10 +53,13 @@
             <label>Kelas</label>
             <input type="text" id="kelas" name="kelas" class="form-control" readonly required>
         </div>
+        
+        <!-- Tanggal Transaksi dengan default nilai hari ini dan readonly -->
         <div class="form-group">
             <label>Tanggal Transaksi</label>
-            <input type="date" name="tanggal_transaksi" class="form-control" value="{{ old('tanggal_transaksi') }}" required>
+            <input type="date" name="tanggal_transaksi" id="tanggal_transaksi" class="form-control" required readonly>
         </div>
+
         <div class="form-group">
             <label>Jumlah Setoran</label>
             <input type="number" name="jumlah_setoran" class="form-control" value="{{ old('jumlah_setoran') }}" required>
@@ -70,7 +81,25 @@ function populateNasabahData() {
     document.getElementById('nama_nasabah').value = namaNasabah || '';
     document.getElementById('id_nasabah').value = idNasabah || '';
     document.getElementById('kelas').value = kelas || '';
+    
+    // Set default date to today and disable editing
+    var today = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    document.getElementById('tanggal_transaksi').value = today;
 }
 
+// Initialize Select2 for the nasabah dropdown (searchable select)
+$(document).ready(function() {
+    $('#nasabah_id').select2({
+        placeholder: '-- Pilih Nasabah --',
+        width: '100%',
+        allowClear: true,  // Enable clearing the search input
+        minimumInputLength: 2,  // Start search after typing 2 characters
+        language: {
+            noResults: function() {
+                return "Tidak ada hasil ditemukan";  // Text for no results
+            }
+        }
+    });
+});
 </script>
 @endsection

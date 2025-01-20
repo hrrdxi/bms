@@ -4,108 +4,74 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-<style>
-@keyframes typing {
-    0% { width: 0; }
-    9% { width: 0; }      
-    70% { width: 100%; }     
-    85% { width: 100%; }     
-    100% { width: 0; }       
-}
-
-@keyframes blink {
-    0%, 100% { border-color: transparent; }
-    50% { border-color: #007bff; }
-}
-
-.typing-animation {
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 3px solid #007bff;
-    animation: typing 10s steps(105, end) infinite, blink 0.8s step-end infinite;
-    animation-delay: 0s;
-    font-size: 16px;
-    color: #4CAF50;
-}
-</style>
+ <form action="{{ route('logout') }}" method="POST" class="d-inline">
+    @csrf
+    <button type="submit" class="btn btn-danger mt-3">
+        <i class="bi bi-box-arrow-right"></i> Logout
+    </button>
+</form>
 
 <div class="content">
-    <!-- Header Card -->
-    <div class="card shadow-sm p-3 mb-4 bg-white rounded top-border" style="border-top: 5px solid #007bff;">
-        <div class="card-body">
-            <h4 class="card-title" style="color: #4A4A4A; font-size: 22px;">Selamat Datang <span class="text-danger">Administrator</span> di APLIKASI MINI BANK SEKOLAH</h4>
-            <p class="card-text" style="font-size: 14px;">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y') }}</p>
+    <div class="card main-header mb-4">
+        <div class="card-body text-center position-relative overflow-hidden">
+            <div class="header-bg"></div>
+            <div class="position-relative">
+                <h1 class="display-4 fw-bold text-gradient mb-3">Selamat Datang!</h1>
+                <p class="lead mb-2">
+                    <span class="fw-semibold">Administrator</span> Mini Bank Sekolah
+                </p>
+                <p class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}</p>
+
+            </div>
         </div>
     </div>
 
-    <!-- Transaksi Hari Minggu -->
-    <div class="card mb-4">
-        <div class="card-header bg-light" style="background-color: #E0E0E0; color: #007bff;">
-            <h5 style="font-size: 16px;"><i class="fas fa-dollar-sign"></i> Transaksi Mini Bank Minggu Ini</h5>
-        </div>
-        <div class="card-body">
-            <div class="row d-flex justify-content-center">
-                <div class="col-md-5 mb-3">
-                    <div class="card shadow-sm" style="border-left: 5px solid #007bff; width: 100%;">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <div class="text-truncate" style="max-width: 75%;">
-                                <!-- Add typing animation class here -->
-                                <h6 class="text-primary typing-animation" style="color: #4CAF50; font-size: 16px;">TABUNGAN MASUK</h6>
-                                <p class="card-text" style="font-size: 16px;">Rp. 0</p>
-                            </div>
-                            <i class="fas fa-shopping-cart fa-2x text-muted"></i>
+    <!-- Financial Overview Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Daily Balance -->
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Setoran Hari Ini</p>
+                            <h3 class="mb-0">Rp {{ number_format($totalSetoranHariIni ?? 0, 0, ',', '.') }}</h3>
+                        </div>
+                        <div class="icon-container bg-primary-subtle">
+                            <i class="bi bi-wallet2"></i>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-5 mb-3">
-                    <div class="card shadow-sm" style="border-left: 5px solid #007bff; width: 100%;">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <div class="text-truncate" style="max-width: 75%;">
-                                <!-- Add typing animation class here -->
-                                <h6 class="text-primary typing-animation" style="color: #007bff; font-size: 16px;">PENARIKAN TABUNGAN</h6>
-                                <p class="card-text" style="font-size: 16px;">Rp. 0</p>
-                            </div>
-                            <i class="fas fa-wallet fa-2x text-muted"></i>
+                    <div class="mt-3 progress-container">
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-primary" style="width: {{ (($totalSetoranHariIni ?? 0) / (($totalSetoranHariIni ?? 0) + ($totalPenarikanHariIni ?? 0) + 1)) * 100 }}%"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Transaksi Bulan Maret -->
-    <div class="card mb-4">
-        <div class="card-header bg-light" style="background-color: #E0E0E0; color: #4CAF50;">
-            <h5 style="font-size: 16px;"><i class="fas fa-calendar-alt"></i> Transaksi Mini Bank Bulan Ini</h5>
-        </div>
-        <div class="card-body">
-            <div class="row d-flex justify-content-center">
-                <div class="col-md-5 mb-3">
-                    <div class="card shadow-sm" style="border-left: 5px solid #007bff; width: 100%;">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <div class="text-truncate" style="max-width: 75%;">
-                                <h6 class="text-primary typing-animation" style="color: #4CAF50; font-size: 16px;">TABUNGAN MASUK</h6>
-                                <p class="card-text" style="font-size: 16px;">Rp. 0</p>
-                            </div>
-                            <i class="fas fa-shopping-cart fa-2x text-muted"></i>
+        <!-- Daily Withdrawals -->
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Penarikan Hari Ini</p>
+                            <h3 class="mb-0">Rp {{ number_format($totalPenarikanHariIni ?? 0, 0, ',', '.') }}</h3>
+                        </div>
+                        <div class="icon-container bg-danger-subtle">
+                            <i class="bi bi-cash-stack"></i>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-5 mb-3">
-                    <div class="card shadow-sm" style="border-left: 5px solid #007bff; width: 100%;">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <div class="text-truncate" style="max-width: 75%;">
-                                <h6 class="text-primary typing-animation" style="color: #007bff; font-size: 16px;">PENARIKAN TABUNGAN</h6>
-                                <p class="card-text" style="font-size: 16px;">Rp. 0</p>
-                            </div>
-                            <i class="fas fa-wallet fa-2x text-muted"></i>
+                    <div class="mt-3 progress-container">
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-danger" style="width: {{ (($totalPenarikanHariIni ?? 0) / (($totalSetoranHariIni ?? 0) + ($totalPenarikanHariIni ?? 0) + 1)) * 100 }}%"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Monthly Total -->
+        <!-- (Lanjutkan dengan struktur lainnya) -->
     </div>
 </div>
-
 @endsection

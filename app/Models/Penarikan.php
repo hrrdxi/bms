@@ -12,9 +12,17 @@ class Penarikan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_penarikan', 'nasabah_id', 'nama_nasabah', 'kelas',
-        'keterangan_penarikan', 'tanggal_penarikan', 'jumlah_penarikan'
+        'id_penarikan',
+        'nasabah_id',
+        'nama_nasabah',
+        'kelas',
+        'keterangan_penarikan',
+        'tanggal_penarikan',
+        'jumlah_penarikan',
+        'amount',
+        'user_id',
     ];
+    
 
     /**
      * Relasi: Penarikan dimiliki oleh satu nasabah.

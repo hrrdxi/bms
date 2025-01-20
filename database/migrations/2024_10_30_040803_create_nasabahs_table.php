@@ -23,7 +23,7 @@ class CreateNasabahsTable extends Migration
             $table->string('no_telepon');
             $table->string('kelas');
             $table->string('jurusan');
-            $table->string('nomor_identitas')->unique(); // Nomor identitas unik
+            $table->string('no_identitas')->unique(); // Ubah dari 'nomor_identitas' ke 'no_identitas'
             $table->string('foto_kartu_pelajar')->nullable(); // Foto kartu pelajar, opsional
             $table->unsignedTinyInteger('angka_kelas')->nullable(); // Kolom angka_kelas yang dapat bernilai null
             $table->decimal('saldo', 15, 2)->default(0); // Saldo dengan nilai default 0

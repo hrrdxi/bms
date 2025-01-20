@@ -103,12 +103,12 @@
             <a href="{{ route('setoran.create') }}" class="btn btn-success btn-action mb-2">
                 <i class="fas fa-plus"></i> Tambah Setoran Masuk
             </a>
-            <a href="#" class="btn btn-primary btn-action mb-2">
+            <a href="{{ route('setoran.cekHariIni') }}" class="btn btn-primary btn-action mb-2">
                 <i class="fas fa-calendar-day"></i> Cek Hari Ini
             </a>
-            <a href="#" class="btn btn-danger btn-action mb-2">
+            <a href="{{ route('setoran.cekSemua') }}" class="btn btn-danger btn-action mb-2">
                 <i class="fas fa-eye"></i> Cek Semua Setoran
-            </a>
+            </a>            
         </div>
         <a href="#" class="btn btn-warning mb-2">
             <i class="fas fa-file-export"></i> Export Per Tanggal
