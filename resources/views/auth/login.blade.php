@@ -10,7 +10,7 @@
                     <!-- Email Input -->
                     <div class="mb-4">
                         <label for="email" class="form-label">EMAIL</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required autofocus>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="name@gmail.com" required autofocus>
                     </div>
 
                     <!-- Password Input -->

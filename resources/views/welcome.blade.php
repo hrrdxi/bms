@@ -1,148 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="asset/style/home.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMS Landing Page</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;800;900&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .landing-page {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                rgba(0, 0, 0, 0.7),
+                rgba(0, 0, 0, 0.8)
+            );
+            z-index: -1;
+        }
+
+        .nav-buttons {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 2rem;
+            z-index: 10;
+        }
+
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 90%;
+            max-width: 800px;
+            color: white;
+            z-index: 1;
+        }
+
+        .header-text h1 {
+            font-size: 4.5rem;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header-text p {
+            font-size: 2.5rem;
+            margin: 1rem 0;
+            font-weight: 800;
+            color: #a5e48b;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #a5e48b;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #a5e48b;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-text h1 {
+                font-size: 3rem;
+            }
+
+            .header-text p {
+                font-size: 1.8rem;
+            }
+
+            .nav-buttons {
+                top: 1rem;
+                right: 1rem;
+                gap: 1rem;
+            }
+
+            .nav-link {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<title>home</title>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-buttons">
+    <div class="landing-page">
+        <img src="{{ asset('asset/image/amaliahb.jpg') }}" alt="Background" class="background-image">
+        <div class="background-overlay"></div>
+        <div class="nav-buttons">
+            <a href="{{route('login') }}" class="nav-link">Login</a>
+        </div>
+        <div class="content">
+            <div class="header-text">
+                <h1> SELAMAT DATANG </h1>
+                <p>MINI BANK AMALIAH</p>
+            </div>
+        </div>
     </div>
-  </nav>
-
-  <!-- Hero Section -->
-   <div class="logo-am">
-          <img src="img/lps-removebg-preview.png" alt="" class="logo">
-      <img src="img/logo_smk_amaliah-removebg-preview.png" alt="" class="logo">
-   </div>
-  <section class="hero">
-    <!-- Text Section -->
-    <div class="hero-text">
-      <h2>Hallo, Selamat datang di BMS</h2>
-      <h1>AYO<br> MENABUNG</h1>
-      <p>Isi apaa yaa</p>
-      <div class="hero-buttons">
-        <a href="{{ route('login') }}"><button class="hero-btn primary">Login</button></a>
-      </div>
-    </div>
-
-    <!-- Image Section -->
-    <div class="hero-image">
-      <img src="img/hero.png" alt="">
-    </div>
-  </section>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Times New Roman', Times, serif;
-      background: linear-gradient(to right, #ffffff 40%, #c4edc2 80%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-
-    .hero {
-      display: flex;
-      flex-direction: column-reverse;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      gap: 20px;
-    }
-
-    .hero-text {
-      text-align: center;
-    }
-
-    .logo-am{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo{
-      height: 75px;
-    }
-
-    .hero-text h1 {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #22c55e;
-      margin: 10px 0;
-      margin-left:80px;
-      margin-top: 15px;
-    }
-
-
-    .hero-text h2 {
-      font-size: 1.25rem;
-      color: #333;
-      margin-left:80px;
-    }
-
-    .hero-text p {
-      font-size: 1rem;
-      color: #555;
-      margin-bottom: 30px;
-      margin-left:81px;
-    }
-
-    .hero-buttons .hero-btn {
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .hero-buttons .primary {
-      background-color: #22c55e;
-      color: white;
-      border: none;
-      margin-left:80px;
-    }
-
-    .hero-buttons .primary:hover {
-      background-color: #818783;
-    }
-
-    .hero-buttons .secondary {
-      background-color: white;
-      color: #22c55e;
-      border: 2px solid #22c55e;
-    }
-
-    .hero-buttons .secondary:hover {
-      background-color: #c6c4c4;
-    }
-
-    .hero-image img {
-      max-width: 100%;
-      height: auto;
-    }
-
-    @media (min-width: 768px) {
-      .hero {
-        flex-direction: row;
-        justify-content: space-between;
-      }
-
-      .hero-text {
-        text-align: left;
-      }
-    }
-    /* .container{
-      display:flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px ;
-    } */
-  </style>
 </body>
 </html>

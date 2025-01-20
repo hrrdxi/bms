@@ -36,8 +36,8 @@
                 padding: 50px;
             }
             .right-content {
-                width: 50%;
-                background-image: url('{{ asset('asset/image/building-background.jpg') }}');
+                width: 55%;
+                background-image: url('{{ asset('asset/image/amaliahb.jpg') }}');
                 background-size: cover;
                 background-position: center;
                 clip-path: polygon(25% 0, 100% 0, 100% 100%, 0 100%);
@@ -49,15 +49,18 @@
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: rgba(0, 0, 0, 0.2);
+                background: linear-gradient(
+                rgba(0, 0, 0, 0.6),
+                rgba(0, 0, 0, 0.8)
+            );
             }
             .logo-container {
                 position: fixed;
-                top: 20px;
-                left: 20px;
-                background: white;
-                padding: 12px 20px;
-                border-radius: 0 25px 25px 0;
+                top: 35px;
+                left: 0px;
+                background: rgb(255, 255, 255);
+                padding: 10px 25px;
+                border-radius: 0 20px 20px 0;
                 display: flex;
                 align-items: center;
                 gap: 10px;
@@ -70,14 +73,12 @@
             }
             .login-form-container {
                 width: 100%;
-                padding: 0 20px;
+                padding: 0 50px;
             }
             .login-form {
                 width: 100%;
                 max-width: 550px; /* Form diperlebar */
                 padding: 20px 30px; /* Padding tambahan untuk jarak dalam form */
-                background-color: #fff;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
                 border-radius: 8px;
             }
             .btn-login {
@@ -102,8 +103,8 @@
     <body>
         <div class="container-fluid">
             <div class="logo-container">
-                <img src="{{ asset('asset/image/lps logo.png') }}" alt="Logo 1" class="logo">
-                <img src="{{ asset('asset/image/amaliah logo.png') }}" alt="Logo 2" class="logo">
+                <img src="{{ asset('asset/image/legepeges.png') }}" alt="Logo 1" class="logo">
+                <img src="{{ asset('asset/image/logosmk-wide.png') }}" alt="Logo 2" class="logo">
             </div>
             {{ $slot }}
         </div>
