@@ -11,7 +11,7 @@ class PenarikanController extends Controller
 {
     public function index()
     {
-        $penarikans = Penarikan::paginate(8);
+        $penarikans = Penarikan::paginate(10);
         return view('penarikan', compact('penarikans'));
     }
 
@@ -32,73 +32,48 @@ class PenarikanController extends Controller
             'tanggal_penarikan' => 'required|date',
             'jumlah_penarikan' => 'required|numeric|min:0',
         ]);
-    
-        // Mendapatkan tanggal penarikan
-        $tanggal = \Carbon\Carbon::parse($request->tanggal_penarikan, 'Asia/Jakarta'); // Menggunakan waktu WIB
-    
-        // Format ID Penarikan: PN-HHMMDDMMYY (contoh: PN-1215041124)
-        $jam_sekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('Hi'); // Format HHMM (Jam dan Menit) sesuai WIB
-        $tanggal_transaksi = $tanggal->format('dmy'); // Format ddmmyy (misal: 041124)
-    
-        // Kombinasi untuk ID Penarikan
-        $prefix = 'PN-' . $jam_sekarang . $tanggal_transaksi; // Menghasilkan ID seperti PN-1215041124
-    
-        // Menghitung jumlah penarikan yang ada pada tanggal tersebut
+
+        $tanggal = \Carbon\Carbon::parse($request->tanggal_penarikan, 'Asia/Jakarta');
+        $jam_sekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('Hi');
+        $tanggal_transaksi = $tanggal->format('dmy');
+        $prefix = 'PN-' . $jam_sekarang . $tanggal_transaksi;
         $count = Penarikan::whereDate('tanggal_penarikan', $tanggal->toDateString())->count() + 1;
-    
-        // Membuat ID Penarikan dengan format: PN-HHMMDDMMYY-001
         $id_penarikan = $prefix . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
-    
-        // Simpan penarikan baru dengan ID Penarikan yang sudah di-generate
-$penarikan = Penarikan::create(array_merge($validated, [
-    'id_penarikan' => $id_penarikan,
-    'amount' => $request->jumlah_penarikan, // Isi amount sesuai jumlah penarikan
-]));
 
-session(['last_penarikan_id' => $penarikan->id]);
-    
+        $penarikan = Penarikan::create(array_merge($validated, [
+            'id_penarikan' => $id_penarikan,
+            'amount' => $request->jumlah_penarikan,
+        ]));
 
-        // Redirect dengan pesan sukses
-        return redirect()->route('penarikan.index')->with('success', 'Penarikan berhasil ditambahkan dengan ID: ' . $id_penarikan);
+        return redirect()->route('penarikan.index')
+            ->with('success', 'penarikan berhasil ditambahkan dengan ID: ' . $id_penarikan)
+            ->with('last_penarikan_id', $penarikan->id);
     }
-    
-    
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Penarikan $penarikan)
     {
         return view('penarikan.edit', compact('penarikan'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Penarikan $penarikan)
     {
-        // Validate request data
+        // Validasi input
         $request->validate([
             'id_penarikan' => 'required|unique:penarikans,id_penarikan,' . $penarikan->id,
             'nama_nasabah' => 'required',
             'kelas' => 'required',
             'keterangan_penarikan' => 'required',
-            'tanggal_penarikan' => 'required|date',
-            'jumlah_penarikan' => 'required|numeric',
+            'jumlah_penarikan' => 'required|numeric|min:0',
         ]);
 
-        // Update penarikan
         $penarikan->update($request->all());
 
-        return redirect()->route('penarikan.index')->with('success', 'Penarikan berhasil diupdate.');
+        return redirect()->route('penarikan.index')->with('success', 'Penarikan berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Penarikan $penarikan)
     {
-        // Delete penarikan
+        // Hapus penarikan
         $penarikan->delete();
 
         return redirect()->route('penarikan.index')->with('success', 'Penarikan berhasil dihapus.');
@@ -108,7 +83,7 @@ session(['last_penarikan_id' => $penarikan->id]);
     {
         $penarikan = Penarikan::findOrFail($id);
         $pdf = PDF::loadView('penarikan.slip', compact('penarikan'));
-        return $pdf->download("slip-penarikan-{$penarikan->id_penarikan}.pdf");
+        return $pdf->download('slip-penarikan-' . $penarikan->id_penarikan . '.pdf');
     }
 
     public function printSlip($id)
@@ -117,6 +92,22 @@ session(['last_penarikan_id' => $penarikan->id]);
         $pdf = PDF::loadView('penarikan.slip', compact('penarikan'));
         return $pdf->stream('slip-penarikan-' . $penarikan->id_penarikan . '.pdf');
     }
-    
-}
 
+    public function search(Request $request)
+    {
+        $query = Penarikan::query();
+
+        // Search by name or ID
+        if ($request->has('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('nama_nasabah', 'like', "%{$searchTerm}%")
+                  ->orWhere('id_penarikan', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        $penarikans = $query->paginate(10);
+
+        return view('penarikan', compact('penarikans'));
+    }
+}

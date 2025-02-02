@@ -12,7 +12,7 @@
             <div class="position-relative">
                 <h1 class="display-4 fw-bold text-gradient mb-3">Selamat Datang!</h1>
                 <p class="lead mb-2">
-                    <span class="fw-semibold">Administrator</span> Mini Bank Sekolah
+                    <span class="fw-semibold">Administrator</span> Mini Bank Amaliah
                 </p>
                 <p class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}</p>
             </div>

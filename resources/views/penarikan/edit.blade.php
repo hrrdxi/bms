@@ -34,8 +34,10 @@
             <textarea name="keterangan_penarikan" class="form-control" required>{{ $penarikan->keterangan_penarikan }}</textarea>
         </div>
         <div class="form-group">
-            <label>Tanggal Penarikan</label>
-            <input type="date" name="tanggal_penarikan" class="form-control" value="{{ $penarikan->tanggal_penarikan }}" required>
+            <label for="tanggal_transaksi">Tanggal Transaksi</label>
+            <input type="date" id="tanggal_transaksi" name="tanggal_transaksi" 
+                   value="{{ old('tanggal_transaksi', \Carbon\Carbon::now()->toDateString()) }}" 
+                   class="form-control" readonly>
         </div>
         <div class="form-group">
             <label>Jumlah Penarikan</label>

@@ -34,8 +34,10 @@
             <input type="text" name="kelas" class="form-control" value="{{ $setoran->kelas }}" required>
         </div>
         <div class="form-group">
-            <label>Tanggal Transaksi</label>
-            <input type="date" name="tanggal_transaksi" class="form-control" value="{{ $setoran->tanggal_transaksi }}" required>
+            <label for="tanggal_transaksi">Tanggal Transaksi</label>
+            <input type="date" id="tanggal_transaksi" name="tanggal_transaksi" 
+                   value="{{ old('tanggal_transaksi', \Carbon\Carbon::now()->toDateString()) }}" 
+                   class="form-control" readonly>
         </div>
         <div class="form-group">
             <label>Jumlah Setoran</label>

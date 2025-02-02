@@ -12,9 +12,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('penarikans', function (Blueprint $table) {
-            // Pastikan kolom user_id ada sebelum diubah
-            if (Schema::hasColumn('penarikans', 'user_id')) {
-                $table->unsignedBigInteger('user_id')->nullable()->change();
+            // Tambahkan kolom user_id jika belum ada
+            if (!Schema::hasColumn('penarikans', 'user_id')) {
+                $table->unsignedBigInteger('user_id')->nullable()->after('id'); // Letakkan setelah kolom 'id'
             }
         });
     }
@@ -22,9 +22,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('penarikans', function (Blueprint $table) {
-            if (Schema::hasColumn('penarikans', 'user_id')) {
-                $table->unsignedBigInteger('user_id')->nullable(false)->change();
-            }
+            $table->dropColumn('user_id');
         });
     }
 };

@@ -19,7 +19,7 @@
             <tbody>
                 @foreach ($setorans as $setoran)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ ($setorans->currentPage() - 1) * $setorans->perPage() + $loop->iteration }}</td>
                         <td>{{ $setoran->id_setoran }}</td>
                         <td>{{ $setoran->nama_nasabah }}</td>
                         <td>{{ $setoran->kelas }}</td>
@@ -31,8 +31,30 @@
         </table>
     </div>
 
-    <div class="pagination-wrapper mt-3">
-        {{ $setorans->links() }}
+    <div class="d-flex justify-content-left align-items-left mt-4">
+        @if($setorans->lastPage() > 1)
+        <nav>
+            <ul class="pagination">
+                {{-- Previous Page Link --}}
+                @if($setorans->currentPage() > 1)
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $setorans->previousPageUrl() }}" rel="prev">
+                            Previous
+                        </a>
+                    </li>
+                @endif
+    
+                {{-- Next Page Link --}}
+                @if($setorans->hasMorePages())
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $setorans->nextPageUrl() }}" rel="next">
+                            Next
+                        </a>
+                    </li>
+                @endif
+            </ul>
+        </nav>
+        @endif
     </div>
 </div>
 @endsection

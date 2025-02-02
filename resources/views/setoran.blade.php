@@ -12,27 +12,27 @@
             table-layout: auto;
             font-size: 14px;
         }
-
+    
         .table thead {
             background-color: #00a1e0;
             color: white;
         }
-
+    
         .table td, .table th {
             white-space: nowrap;
             padding: 5px;
         }
-
+    
         .table .action-buttons {
             display: flex;
             justify-content: center;
             gap: 8px;
         }
-
+    
         .table tbody tr:hover {
             background-color: #e6f7ff;
         }
-
+    
         .pagination a, .pagination span {
             background-color: #00a1e0;
             color: white;
@@ -42,12 +42,12 @@
             text-decoration: none;
             transition: background-color 0.3s, border-radius 0.3s;
         }
-
+    
         .pagination a:hover, .pagination .active span {
             background-color: #007bbd;
             border-radius: 25px;
         }
-
+    
         /* New styles for popup */
         .popup-overlay {
             display: none;
@@ -59,7 +59,7 @@
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1050;
         }
-
+    
         .popup-content {
             position: fixed;
             top: 50%;
@@ -72,76 +72,127 @@
             z-index: 1051;
             min-width: 300px;
         }
-
+    
         .popup-buttons {
             margin-top: 20px;
             display: flex;
             justify-content: center;
             gap: 10px;
         }
-
+    
+        .input-group {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 7px;
+    }
+    
+    .input-group .form-control {
+        border-radius: 4px;
+        padding: 6px 12px;
+        margin-bottom: 7px;
+    }
+    
         @media (max-width: 768px) {
             .table td, .table th {
                 font-size: 12px;
                 padding: 3px;
             }
-
+    
             .table .action-buttons {
                 flex-direction: column;
                 gap: 4px;
             }
-
+    
             .btn-action {
                 font-size: 12px;
                 padding: 3px 8px;
             }
         }
+    
+        .btn-action {
+            min-width: 120px; /* Agar tombol seragam */
+        }
+    
+        .d-flex.flex-wrap.gap-2 .btn-action {
+            margin-right: 8px; /* Memberi jarak antar tombol */
+            margin-bottom: 8px; /* Jarak antar baris di layar kecil */
+        }
+    
+        .input-group .btn {
+            min-width: 100px; /* Ukuran tombol Cari dan Reset */
+            margin-right: 10px;
+        }
     </style>
 </head>
+
+@if(session('success'))
+<div class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
 
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Setoran Masuk</h1>
 
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-
-        <!-- Popup for printing slip after successful creation -->
-        <div class="popup-overlay" id="printPopup">
-            <div class="popup-content">
-                <h4 class="text-center mb-3">Setoran Berhasil Ditambahkan!</h4>
-                <p class="text-center mb-4">Apakah Anda ingin mencetak slip setoran sekarang?</p>
-                <div class="popup-buttons">
+    @if(session('success') && session('last_setoran_id'))
+    <div class="popup-overlay" id="printPopup">
+        <div class="popup-content">
+            <h4 class="text-center mb-3">Setoran Berhasil Ditambahkan!</h4>
+            <p class="text-center mb-4">Apakah Anda ingin mencetak slip setoran sekarang?</p>
+            <div class="popup-buttons">
+                @if(session('last_setoran_id'))
                     <a href="{{ route('setoran.print-slip', ['id' => session('last_setoran_id')]) }}" 
                        class="btn btn-primary">
                         <i class="fas fa-print me-1"></i> Cetak Slip
                     </a>
-                    <button class="btn btn-secondary" 
-                            onclick="document.getElementById('printPopup').style.display='none'">
-                        Nanti Saja
+                @else
+                    <button class="btn btn-primary" disabled>
+                        <i class="fas fa-print me-1"></i> Cetak Slip (Tidak Tersedia)
                     </button>
-                </div>
+                @endif
+                <button class="btn btn-secondary" 
+                        onclick="document.getElementById('printPopup').style.display='none'">
+                    Nanti Saja
+                </button>
             </div>
         </div>
-    @endif
+    </div>
+@endif
 
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        <div class="mb-2">
-            <a href="{{ route('setoran.create') }}" class="btn btn-success btn-action mb-2">
-                <i class="fas fa-plus"></i> Tambah Setoran Masuk
-            </a>
-            <a href="{{ route('setoran.cekHariIni') }}" class="btn btn-primary btn-action mb-2">
-                <i class="fas fa-calendar-day"></i> Cek Hari Ini
-            </a>
-            <a href="{{ route('setoran.cekSemua') }}" class="btn btn-danger btn-action mb-2">
-                <i class="fas fa-eye"></i> Cek Semua Setoran
-            </a>            
-        </div>
-        <a href="#" class="btn btn-warning mb-2">
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <!-- Grup tombol aksi -->
+    <div class="d-flex flex-wrap gap-2 mb-2">
+        <a href="{{ route('setoran.create') }}" class="btn btn-success btn-action">
+            <i class="fas fa-plus"></i> Tambah Setoran Uang
+        </a>
+        <a href="{{ route('setoran.cekHariIni') }}" class="btn btn-primary btn-action">
+            <i class="fas fa-calendar-day"></i> Cek Hari Ini
+        </a>
+        <a href="{{ route('setoran.cekSemua') }}" class="btn btn-danger btn-action">
+            <i class="fas fa-eye"></i> Cek Semua Setoran
+        </a>
+        <a href="#" class="btn btn-warning btn-action">
             <i class="fas fa-file-export"></i> Export Per Tanggal
         </a>
     </div>
+
+    <form action="{{ route('setoran.search') }}" method="GET" class="d-flex flex-grow-1">
+        <div class="input-group">
+            <input type="text" 
+                   name="search" 
+                   class="form-control" 
+                   placeholder="Cari Nama atau ID setoran" 
+                   value="{{ request('search') }}">
+            <button class="btn btn-primary" type="submit">
+                <i class="fas fa-search"></i> Cari
+            </button>
+            <a href="{{ route('setoran.search') }}" class="btn btn-secondary" >
+                <i class="fas fa-undo"></i> Reset
+            </a>
+        </div>
+    </form>
+</div>
+</div>
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
@@ -160,7 +211,7 @@
             <tbody>
                 @foreach ($setorans as $setoran)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ ($setorans->currentPage() - 1) * $setorans->perPage() + $loop->iteration }}</td>
                         <td>{{ $setoran->id_setoran }}</td>
                         <td>{{ $setoran->nama_nasabah }}</td>
                         <td>{{ $setoran->id_nasabah }}</td>
@@ -216,10 +267,10 @@
     </div>
 </div>
 
-<script>
-    // Show print popup if success message exists
-    @if(session('success') && session('last_setoran_id'))
+    @if(session('success') && session('last_setoran_id') && request()->routeIs('setoran.index'))
+    <script>
+        console.log('Popup should appear');
         document.getElementById('printPopup').style.display = 'block';
+    </script>
     @endif
-</script>
 @endsection

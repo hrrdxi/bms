@@ -6,7 +6,7 @@
         </button>
     </div>
     <div class="p-4">
-        <h1><a href="/" class="logo"> MINI BANK <span> SMK AMALIAH CIAWI 1 & 2 </span></a></h1>
+        <h1><a href="/" class="logo"> AM - BANK <span> SMK AMALIAH CIAWI 1 & 2 </span></a></h1>
         <ul class="list-unstyled components mb-5">
             <!-- Dashboard without dropdown -->
             <li class="active">
@@ -50,7 +50,7 @@
         </ul>
         
         <div class="footer">
-            <p>&copy; <script>document.write(new Date().getFullYear());</script>| Made with <i class="icon-heart" aria-hidden="true"></i> by TeamDev</a></p>
+            <p>&copy; <script>document.write(new Date().getFullYear());</script>| Made  <i class="icon-heart" aria-hidden="true"></i> by TeamDev</a></p>
         </div>
     </div>
 </nav>
@@ -59,3 +59,57 @@
 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
     @csrf
 </form>
+
+<script>
+    $(document).ready(function() {
+    // Sidebar and Dropdown State Management
+    const $sidebar = $('#sidebar');
+    const $sidebarCollapseBtn = $('#sidebarCollapse');
+
+    // Retrieve sidebar states
+    const isSidebarCollapsed = sessionStorage.getItem('sidebarCollapsed') === 'true';
+    const activeDropdowns = JSON.parse(sessionStorage.getItem('activeDropdowns') || '[]');
+
+    // Apply saved sidebar state on page load
+    if (isSidebarCollapsed) {
+        $sidebar.addClass('active');
+        $sidebarCollapseBtn.addClass('active');
+    }
+
+    // Restore active dropdowns
+    activeDropdowns.forEach(dropdownId => {
+        $(`#${dropdownId}`).addClass('show');
+        $(`a[href="#${dropdownId}"]`).attr('aria-expanded', 'true');
+    });
+
+    // Toggle sidebar and save state
+    $sidebarCollapseBtn.on('click', function() {
+        $sidebar.toggleClass('active');
+        $(this).toggleClass('active');
+        sessionStorage.setItem('sidebarCollapsed', $sidebar.hasClass('active'));
+    });
+
+    // Manage dropdown states
+    $('.dropdown-toggle').on('click', function() {
+        const $submenu = $($(this).attr('href'));
+        const dropdownId = $submenu.attr('id');
+        const isOpen = $submenu.hasClass('show');
+        
+        // Get current open dropdowns
+        let activeDropdowns = JSON.parse(sessionStorage.getItem('activeDropdowns') || '[]');
+        
+        if (isOpen) {
+            // Remove from active dropdowns
+            activeDropdowns = activeDropdowns.filter(id => id !== dropdownId);
+        } else {
+            // Add to active dropdowns if not already present
+            if (!activeDropdowns.includes(dropdownId)) {
+                activeDropdowns.push(dropdownId);
+            }
+        }
+        
+        // Save updated active dropdowns
+        sessionStorage.setItem('activeDropdowns', JSON.stringify(activeDropdowns));
+    });
+});
+</script>

@@ -25,5 +25,6 @@
     <script src="{{ asset('template/js/popper.js') }}"></script>
     <script src="{{ asset('template/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('template/js/main.js') }}"></script>
+    
 </body>
 </html>

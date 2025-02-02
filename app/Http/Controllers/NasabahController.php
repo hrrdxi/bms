@@ -14,7 +14,7 @@ class NasabahController extends Controller
      */
     public function index()
 {
-    $nasabahs = Nasabah::paginate(5); // Sesuaikan pagination jika perlu
+    $nasabahs = Nasabah::paginate(10); // Sesuaikan pagination jika perlu
     foreach ($nasabahs as $nasabah) {
         $nasabah->kelas_jurusan = $nasabah->kelas . ' ' . $nasabah->jurusan;
         // Pastikan angka_kelas hanya ditambahkan jika ada nilainya
@@ -231,6 +231,32 @@ public function verify($encodedId)
     } catch (\Exception $e) {
         abort(404, 'Data nasabah tidak ditemukan');
     }
+}
+
+public function search(Request $request)
+{
+    $query = Nasabah::query();
+
+    // Search by name or ID
+    if ($request->has('search')) {
+        $searchTerm = $request->input('search');
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('nama', 'like', "%{$searchTerm}%")
+              ->orWhere('id_nasabah', 'like', "%{$searchTerm}%");
+        });
+    }
+
+    $nasabahs = $query->paginate(10);
+
+    // Format kelas_jurusan similar to existing code
+    foreach ($nasabahs as $nasabah) {
+        $nasabah->kelas_jurusan = $nasabah->kelas . ' ' . $nasabah->jurusan;
+        if (!empty($nasabah->angka_kelas) && $nasabah->angka_kelas !== 'Tidak Ada') {
+            $nasabah->kelas_jurusan .= ' ' . $nasabah->angka_kelas;
+        }
+    }
+
+    return view('nasabah', compact('nasabahs'));
 }
 
 }

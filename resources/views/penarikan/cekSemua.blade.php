@@ -20,7 +20,7 @@
             <tbody>
                 @foreach ($penarikans as $penarikan)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ ($penarikans->currentPage() - 1) * $penarikans->perPage() + $loop->iteration }}</td>
                         <td>{{ $penarikan->id_penarikan }}</td>
                         <td>{{ $penarikan->nama_nasabah }}</td>
                         <td>{{ $penarikan->kelas }}</td>
@@ -32,8 +32,30 @@
             </tbody>
         </table>
     </div>
-    <div class="mt-3">
-        {{ $penarikans->links() }}
+    <div class="d-flex justify-content-left align-items-left mt-4">
+        @if($penarikans->lastPage() > 1)
+        <nav>
+            <ul class="pagination">
+                {{-- Previous Page Link --}}
+                @if($penarikans->currentPage() > 1)
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $penarikans->previousPageUrl() }}" rel="prev">
+                            Previous
+                        </a>
+                    </li>
+                @endif
+    
+                {{-- Next Page Link --}}
+                @if($penarikans->hasMorePages())
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $penarikans->nextPageUrl() }}" rel="next">
+                            Next
+                        </a>
+                    </li>
+                @endif
+            </ul>
+        </nav>
+        @endif
     </div>
 </div>
 @endsection

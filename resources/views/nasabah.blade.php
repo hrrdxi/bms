@@ -77,13 +77,28 @@
             <a href="{{ route('nasabah.create') }}" class="btn btn-success btn-action mb-2">
                 <i class="fas fa-plus"></i> Tambah Nasabah
             </a>
-            <a href="#" class="btn btn-primary btn-action mb-2">
+            <a href="{{ route('nasabah.cekSemua') }}" class="btn btn-primary btn-action mb-2">
                 <i class="fas fa-eye"></i> Cek Semua Nasabah
             </a>
         </div>
-        <a href="#" class="btn btn-warning mb-2">
+        <a href="" class="btn btn-warning mb-2">
             <i class="fas fa-file-export"></i> Export Data Nasabah
         </a>
+
+<form action="{{ route('nasabah.search') }}" method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Cari Nama atau ID Nasabah" 
+               value="{{ request('search') }}">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">
+                <i class="fas fa-search"></i> Cari
+            </button>
+            <a href="{{ route('nasabah.search') }}" class="btn btn-secondary">
+                <i class="fas fa-reset"></i> Reset
+            </a>
+        </div>
+    </div>
+</form>
     </div>
 
     <div class="table-responsive">
@@ -104,7 +119,7 @@
             <tbody>
                 @foreach ($nasabahs as $nasabah)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ ($nasabahs->currentPage() - 1) * $nasabahs->perPage() + $loop->iteration }}</td>
                         <td>{{ $nasabah->id_nasabah }}</td>
                         <td>{{ $nasabah->nama }}</td>
                         <td>{{ $nasabah->jenis_kelamin }}</td>
