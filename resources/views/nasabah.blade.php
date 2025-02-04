@@ -134,7 +134,7 @@
                                     {{ $nasabah->angka_kelas }}
                                 @endif
                             @endif
-                        </td>                                                                
+                        </td>                                                              
                         <td>Rp. {{ number_format($nasabah->saldo, 0, ',', '.') }}</td>
                         <td class="action-buttons">
                             <a href="{{ route('nasabah.show', $nasabah->id) }}" class="btn btn-info btn-sm btn-action">

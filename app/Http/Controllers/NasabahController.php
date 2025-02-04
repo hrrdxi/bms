@@ -40,59 +40,81 @@ class NasabahController extends Controller
      * Store a newly created nasabah in the database.
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'foto_kartu_pelajar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        'no_identitas' => 'required|string|max:255|unique:nasabahs,no_identitas', // Tambahkan `unique`
-        'jenis_kelamin' => 'required|string',
-        'tempat_lahir' => 'required|string|max:255',
-        'tanggal_lahir' => 'required|date',
-        'no_telepon' => 'required|string|max:15',
-        'kelas' => 'required|string',
-        'jurusan' => 'required|string',
-        'angka_kelas' => 'required',
-        'saldo' => 'required|numeric',
-    ]);
+    {
+        // Validasi dasar untuk semua tipe
+        $rules = [
+            'nama' => 'required|string|max:255',
+            'foto_kartu_pelajar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'no_identitas' => 'required|string|max:255|unique:nasabahs,no_identitas',
+            'jenis_kelamin' => 'required|string',
+            'tempat_lahir' => 'required|string|max:255',
+            'tanggal_lahir' => 'required|date',
+            'no_telepon' => 'required|string|max:15',
+            'kelas_type' => 'required|in:regular,order',
+            'saldo' => 'required|numeric',
+        ];
 
-    // Lakukan pengecekan jika `no_identitas` sudah ada
-    $existingNasabah = Nasabah::where('no_identitas', $request->no_identitas)->first();
-    if ($existingNasabah) {
-        return redirect()->back()->withErrors(['no_identitas' => 'Nomor identitas sudah digunakan!']);
+        // Tambah validasi berdasarkan tipe kelas
+        if ($request->kelas_type === 'regular') {
+            $rules['kelas'] = 'required|string';
+            $rules['jurusan'] = 'required|string';
+            $rules['angka_kelas'] = 'required';
+        } else {
+            $rules['kelas_order'] = 'required|string';
+        }
+
+        $request->validate($rules);
+
+        // Upload foto kartu pelajar
+        if ($request->hasFile('foto_kartu_pelajar')) {
+            $fotoKartuPelajarPath = $request->file('foto_kartu_pelajar')
+                ->store('foto_kartu_pelajar', 'public');
+            $fotoKartuPelajarPath = str_replace('public/', '', $fotoKartuPelajarPath);
+        }
+
+        // Tentukan prefix berdasarkan tipe kelas dan jurusan
+        $prefix = 'AM2'; // Default untuk order
+        if ($request->kelas_type === 'regular') {
+            $jurusanPPLG = ['PPLG', 'AN', 'TJKT', 'DKV'];
+            $prefix = in_array($request->jurusan, $jurusanPPLG) ? 'AM1' : 'AM2';
+        }
+
+        // Generate ID Nasabah
+        $lastFourDigits = substr($request->no_telepon, -4);
+        $yearAndMonth = date('Ymd', strtotime($request->tanggal_lahir));
+        $id_nasabah = $prefix . '-' . $lastFourDigits . $yearAndMonth;
+
+        // Siapkan data untuk disimpan
+        $data = [
+            'id_nasabah' => $id_nasabah,
+            'nama' => $request->nama,
+            'foto_kartu_pelajar' => $fotoKartuPelajarPath,
+            'no_identitas' => $request->no_identitas,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'no_telepon' => $request->no_telepon,
+            'saldo' => $request->saldo,
+        ];
+
+        // Set nilai kelas, jurusan, dan angka_kelas berdasarkan tipe
+        if ($request->kelas_type === 'regular') {
+            $data['kelas'] = $request->kelas;
+            $data['jurusan'] = $request->jurusan;
+            $data['angka_kelas'] = $request->angka_kelas !== 'Tidak Ada' ? 
+                $request->angka_kelas : null;
+        } else {
+            $data['kelas'] = $request->kelas_order;
+            $data['jurusan'] = null;
+            $data['angka_kelas'] = null;
+        }
+
+        // Buat record nasabah baru
+        Nasabah::create($data);
+
+        return redirect()->route('nasabah.index')
+            ->with('success', 'Nasabah berhasil ditambahkan.');
     }
-
-    if ($request->hasFile('foto_kartu_pelajar')) {
-        $fotoKartuPelajarPath = $request->file('foto_kartu_pelajar')
-            ->store('foto_kartu_pelajar', 'public');
-        
-        // Simpan path relatif tanpa 'public/'
-        $data['foto_kartu_pelajar'] = str_replace('public/', '', $fotoKartuPelajarPath);
-    }
-
-    // Tentukan prefix ID Nasabah berdasarkan jurusan
-    $jurusanPPLG = ['PPLG', 'AN', 'TJKT', 'DKV'];
-    $prefix = in_array($request->jurusan, $jurusanPPLG) ? 'AM1' : 'AM2';
-    $lastFourDigits = substr($request->no_telepon, -4);
-    $yearAndMonth = date('Ymd', strtotime($request->tanggal_lahir));
-    $id_nasabah = $prefix . '-' . $lastFourDigits . $yearAndMonth;
-
-    Nasabah::create([
-        'id_nasabah' => $id_nasabah,
-        'nama' => $request->nama,
-        'foto_kartu_pelajar' => $fotoKartuPelajarPath,
-        'no_identitas' => $request->no_identitas,
-        'jenis_kelamin' => $request->jenis_kelamin,
-        'tempat_lahir' => $request->tempat_lahir,
-        'tanggal_lahir' => $request->tanggal_lahir,
-        'no_telepon' => $request->no_telepon,
-        'kelas' => $request->kelas,
-        'jurusan' => $request->jurusan,
-        'angka_kelas' => $request->angka_kelas !== 'Tidak Ada' ? $request->angka_kelas : null,
-        'saldo' => $request->saldo,
-    ]);
-
-    return redirect()->route('nasabah.index')->with('success', 'Nasabah berhasil ditambahkan.');
-}
 
 
 
