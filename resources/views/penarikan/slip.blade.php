@@ -69,8 +69,19 @@
             border-top: 1px solid black;
             display: inline-block;
         }
+        .img {
+        text-align: center;
+        margin-top: -251px;
+        margin-right:0,10px;
+    }
+
+    .logo {
+        max-width: 350px;
+        height: auto;
+        opacity: 1,9;
+    }
         .footer {
-            margin-top: 60px;
+            margin-top: 140px;
             text-align: center;
             font-size: 10px;
             font-style: italic;
@@ -92,7 +103,9 @@
         <div class="info-container">
             <div class="left-section">
                 <div class="info-row">
-                    <span class="label">Tanggal Transaksi</span><span class="separator">:</span><span class="value">{{ \Carbon\Carbon::parse($penarikan->tanggal_penarikan)->format('d F Y / H:i') }}</span>
+                    <span class="label">Tanggal Transaksi</span>
+                    <span class="separator">:</span>
+                    <span class="value">{{ \Carbon\Carbon::parse($penarikan->created_at)->format('d F Y / H:i') }}</span>
                 </div>
                 <div class="info-row">
                     <span class="label">Nomor Transaksi</span><span class="separator">:</span><span class="value">{{ $penarikan->id_penarikan }}</span>
@@ -136,6 +149,10 @@
                     {{ $penarikan->nama_nasabah }}
                 </div>
             </div>
+        </div>
+        
+        <div class="img">
+    <img src="asset/image/smk.png" alt="" class="logo">
         </div>
 
         <div class="footer">
