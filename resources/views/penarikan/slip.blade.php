@@ -72,14 +72,15 @@
         .img {
         text-align: center;
         margin-top: -251px;
-        margin-right:0,10px;
-    }
+        margin-right: 10px; /* Gunakan titik koma (;) dan ubah koma menjadi titik */
+}
 
-    .logo {
+        .logo {
         max-width: 350px;
         height: auto;
-        opacity: 1,9;
-    }
+        opacity: 0.6; /* Nilai opacity diubah menjadi 0.6 untuk efek samar */
+        filter: blur(2px) brightness(0.9); /* Tambahkan efek blur ringan dan kurangi kecerahan */
+        }
         .footer {
             margin-top: 140px;
             text-align: center;
@@ -152,7 +153,7 @@
         </div>
         
         <div class="img">
-    <img src="asset/image/smk.png" alt="" class="logo">
+    <img src="asset/image/smk3.png" alt="" class="logo">
         </div>
 
         <div class="footer">

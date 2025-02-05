@@ -72,14 +72,15 @@
         .img {
         text-align: center;
         margin-top: -251px;
-        margin-right:0,10px;
-    }
+        margin-right: 10px; /* Gunakan titik koma (;) dan ubah koma menjadi titik */
+}
 
-    .logo {
+        .logo {
         max-width: 350px;
         height: auto;
-        opacity: 1,9;
-    }
+        opacity: 0.6; /* Nilai opacity diubah menjadi 0.6 untuk efek samar */
+        filter: blur(2px) brightness(0.9); /* Tambahkan efek blur ringan dan kurangi kecerahan */
+        }
         .footer {
             margin-top: 60px;
             text-align: center;
@@ -117,18 +118,6 @@
                     <span class="label">Nama Anggota</span><span class="separator">:</span><span class="value">{{ $setoran->nama_nasabah }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="label">Dept</span><span class="separator">:</span><span class="value">{{ $setoran->departemen }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Nama Penyetor</span><span class="separator">:</span><span class="value">{{ $setoran->nama_penyetor }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Alamat</span><span class="separator">:</span><span class="value">{{ $setoran->alamat }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Jenis Akun</span><span class="separator">:</span><span class="value">{{ $setoran->jenis_akun }}</span>
-                </div>
-                <div class="info-row">
                     <span class="label">Jumlah Setoran</span><span class="separator">:</span><span class="value">Rp. {{ number_format($setoran->jumlah_setoran, 0, ',', '.') }}</span>
                 </div>
                 <div class="info-row">
@@ -148,13 +137,19 @@
                 </div>
 
                 <div class="signature-section">
-                    Paraf,
+                    Paraf Petugas,
                     <div class="signature-line"></div>
+                </div>
+
+                <div class="signature-section" style="margin-top: 60px;">
+                    Penerima,
+                    <div class="signature-line"></div>
+                    {{ $setoran->nama_nasabah }}
                 </div>
             </div>
         </div>
                 <div class="img">
-    <img src="asset/image/smk.png" alt="" class="logo">
+    <img src="asset/image/smk3.png" alt="" class="logo">
         </div>
         <div class="footer">
             <div class="reference">Ref. {{ $setoran->ref_number ?? date('YmdHis') }}</div>
