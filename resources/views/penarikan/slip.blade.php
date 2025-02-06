@@ -104,15 +104,13 @@
         <div class="info-container">
             <div class="left-section">
                 <div class="info-row">
-                    <span class="label">Tanggal Transaksi</span>
-                    <span class="separator">:</span>
-                    <span class="value">{{ \Carbon\Carbon::parse($penarikan->created_at)->format('d F Y / H:i') }}</span>
+                    <span class="label">Tanggal Transaksi</span><span class="separator">:</span><span class="value">{{ \Carbon\Carbon::parse($penarikan->created_at)->format('d F Y / H:i') }}</span>
                 </div>
                 <div class="info-row">
                     <span class="label">Nomor Transaksi</span><span class="separator">:</span><span class="value">{{ $penarikan->id_penarikan }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="label">ID Anggota</span><span class="separator">:</span><span class="value">{{ $penarikan->id_nasabah }}</span>
+                    <span class="label">ID Anggota</span><span class="separator">:</span><span class="value">{{ $penarikan->nasabah->id_nasabah }}</span>
                 </div>
                 <div class="info-row">
                     <span class="label">Nama Anggota</span><span class="separator">:</span><span class="value">{{ $penarikan->nama_nasabah }}</span>

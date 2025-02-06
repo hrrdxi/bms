@@ -104,9 +104,7 @@
         <div class="info-container">
             <div class="left-section">
                 <div class="info-row">
-                    <span class="label">Tanggal Transaksi</span>
-                    <span class="separator">:</span>
-                    <span class="value">{{ \Carbon\Carbon::parse($setoran->created_at)->format('d F Y / H:i') }}</span>
+                    <span class="label">Tanggal Transaksi</span><span class="separator">:</span><span class="value">{{ \Carbon\Carbon::parse($setoran->created_at)->format('d F Y / H:i') }}</span>
                 </div>
                 <div class="info-row">
                     <span class="label">Nomor Transaksi</span><span class="separator">:</span><span class="value">{{ $setoran->id_setoran }}</span>
