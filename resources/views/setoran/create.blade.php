@@ -1,14 +1,6 @@
 @extends('layouts.main')
 
 @section('content')
-<head>
-    <!-- Select2 CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-
-    <!-- Select2 JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-</head>
-
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Tambah Setoran Masuk</h1>
 
@@ -24,20 +16,14 @@
 
     <form action="{{ route('setoran.store') }}" method="POST">
         @csrf
-        <!-- Input field with Select2 for searchable dropdown -->
+        <!-- Search input for nasabah -->
         <div class="form-group">
-            <label>Pilih Nasabah</label>
-            <select name="nasabah_id" id="nasabah_id" class="form-control" required onchange="populateNasabahData()">
-                <option value="">-- Pilih Nasabah --</option>
-                @foreach($nasabahs as $nasabah)
-                    <option value="{{ $nasabah->id }}"
-                        data-nama="{{ $nasabah->nama }}"
-                        data-id-nasabah="{{ $nasabah->id_nasabah }}"
-                        data-kelas="{{ $nasabah->kelas }}">
-                        {{ $nasabah->id_nasabah }} - {{ $nasabah->nama }}
-                    </option>
-                @endforeach
-            </select>
+            <label>Cari Nasabah</label>
+            <div class="input-group">
+                <input type="text" id="search_nasabah" class="form-control" placeholder="Masukkan ID atau nama nasabah..." autocomplete="off">
+                <input type="hidden" name="nasabah_id" id="nasabah_id" required>
+            </div>
+            <div id="search_results" class="list-group mt-2" style="position: absolute; z-index: 1000; width: 95%;"></div>
         </div>
 
         <!-- Automatically filled fields -->
@@ -54,7 +40,6 @@
             <input type="text" id="kelas" name="kelas" class="form-control" readonly required>
         </div>
         
-        <!-- Tanggal Transaksi dengan default nilai hari ini dan readonly -->
         <div class="form-group">
             <label>Tanggal Transaksi</label>
             <input type="date" name="tanggal_transaksi" id="tanggal_transaksi" class="form-control" required readonly>
@@ -71,33 +56,74 @@
 </div>
 
 <script>
-// JavaScript function to populate nama, id_nasabah, and kelas based on selected nasabah
-function populateNasabahData() {
-    var selectedNasabah = document.getElementById('nasabah_id');
-    var namaNasabah = selectedNasabah.options[selectedNasabah.selectedIndex].getAttribute('data-nama');
-    var idNasabah = selectedNasabah.options[selectedNasabah.selectedIndex].getAttribute('data-id-nasabah');
-    var kelas = selectedNasabah.options[selectedNasabah.selectedIndex].getAttribute('data-kelas');
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search_nasabah');
+    const searchResults = document.getElementById('search_results');
+    let timeoutId = null;
 
-    document.getElementById('nama_nasabah').value = namaNasabah || '';
-    document.getElementById('id_nasabah').value = idNasabah || '';
-    document.getElementById('kelas').value = kelas || '';
-    
-    // Set default date to today and disable editing
-    var today = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    // Set default date
+    const today = new Date().toISOString().split('T')[0];
     document.getElementById('tanggal_transaksi').value = today;
-}
 
-// Initialize Select2 for the nasabah dropdown (searchable select)
-$(document).ready(function() {
-    $('#nasabah_id').select2({
-        placeholder: '-- Pilih Nasabah --',
-        width: '100%',
-        allowClear: true,  // Enable clearing the search input
-        minimumInputLength: 2,  // Start search after typing 2 characters
-        language: {
-            noResults: function() {
-                return "Tidak ada hasil ditemukan";  // Text for no results
-            }
+    // Debug console log
+    console.log('Script loaded');
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        const query = this.value;
+        console.log('Search query:', query); // Debug log
+
+        if (query.length < 2) {
+            searchResults.innerHTML = '';
+            return;
+        }
+
+        timeoutId = setTimeout(() => {
+            // Log before fetch
+            console.log('Fetching results for:', query);
+
+            // Use full URL for API call
+            fetch(`/api/search-nasabah?query=${encodeURIComponent(query)}`)
+                .then(response => {
+                    console.log('Response received:', response); // Debug log
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Data received:', data); // Debug log
+                    searchResults.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        searchResults.innerHTML = '<div class="list-group-item">Tidak ada hasil</div>';
+                        return;
+                    }
+
+                    data.forEach(nasabah => {
+                        const div = document.createElement('div');
+                        div.className = 'list-group-item list-group-item-action';
+                        div.innerHTML = `${nasabah.id_nasabah} - ${nasabah.nama}`;
+                        div.addEventListener('click', () => {
+                            console.log('Selected nasabah:', nasabah); // Debug log
+                            document.getElementById('nasabah_id').value = nasabah.id;
+                            document.getElementById('nama_nasabah').value = nasabah.nama;
+                            document.getElementById('id_nasabah').value = nasabah.id_nasabah;
+                            document.getElementById('kelas').value = nasabah.kelas;
+                            searchInput.value = `${nasabah.id_nasabah} - ${nasabah.nama}`;
+                            searchResults.innerHTML = '';
+                        });
+                        searchResults.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    searchResults.innerHTML = '<div class="list-group-item text-danger">Terjadi kesalahan</div>';
+                });
+        }, 300);
+    });
+
+    // Close search results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.innerHTML = '';
         }
     });
 });

@@ -1,14 +1,6 @@
 @extends('layouts.main')
 
 @section('content')
-<head>
-    <!-- Select2 CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-
-    <!-- Select2 JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-</head>
-
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Tambah Penarikan Uang</h1>
 
@@ -25,19 +17,14 @@
     <form action="{{ route('penarikan.store') }}" method="POST">
         @csrf
 
-        <!-- Input field with Select2 for searchable dropdown -->
+        <!-- Input field for nasabah search -->
         <div class="form-group">
-            <label>Pilih Nasabah</label>
-            <select name="nasabah_id" id="nasabah_id" class="form-control" required onchange="populateNasabahData()">
-                <option value="">-- Pilih Nasabah --</option>
-                @foreach($nasabahs as $nasabah)
-                    <option value="{{ $nasabah->id }}"
-                        data-nama="{{ $nasabah->nama }}"
-                        data-kelas="{{ $nasabah->kelas }}">
-                        {{ $nasabah->id_nasabah }} - {{ $nasabah->nama }}
-                    </option>
-                @endforeach
-            </select>
+            <label>Cari Nasabah</label>
+            <div class="input-group">
+                <input type="text" id="search_nasabah" class="form-control" placeholder="Masukkan ID atau nama nasabah..." autocomplete="off">
+                <input type="hidden" name="nasabah_id" id="nasabah_id" required>
+            </div>
+            <div id="search_results" class="list-group mt-2" style="position: absolute; z-index: 1000; width: 95%;"></div>
         </div>
 
         <!-- Automatically filled fields -->
@@ -56,7 +43,6 @@
             <input type="text" name="keterangan_penarikan" class="form-control" value="{{ old('keterangan_penarikan') }}" required>
         </div>
 
-        <!-- Tanggal Penarikan dengan default nilai hari ini dan readonly -->
         <div class="form-group">
             <label>Tanggal Penarikan</label>
             <input type="date" name="tanggal_penarikan" id="tanggal_penarikan" class="form-control" required readonly>
@@ -73,31 +59,60 @@
 </div>
 
 <script>
-// JavaScript function to populate nama, kelas based on selected nasabah
-function populateNasabahData() {
-    const selectedNasabah = document.getElementById('nasabah_id');
-    const namaNasabah = selectedNasabah.options[selectedNasabah.selectedIndex].getAttribute('data-nama');
-    const kelas = selectedNasabah.options[selectedNasabah.selectedIndex].getAttribute('data-kelas');
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search_nasabah');
+    const searchResults = document.getElementById('search_results');
+    let timeoutId = null;
 
-    document.getElementById('nama_nasabah').value = namaNasabah || '';
-    document.getElementById('kelas').value = kelas || '';
-    
-    // Set default date to today and disable editing
-    var today = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    // Set default date
+    const today = new Date().toISOString().split('T')[0];
     document.getElementById('tanggal_penarikan').value = today;
-}
 
-// Initialize Select2 for the nasabah dropdown (searchable select)
-$(document).ready(function() {
-    $('#nasabah_id').select2({
-        placeholder: '-- Pilih Nasabah --',
-        width: '100%',
-        allowClear: true,  // Enable clearing the search input
-        minimumInputLength: 2,  // Start search after typing 2 characters
-        language: {
-            noResults: function() {
-                return "Tidak ada hasil ditemukan";  // Text for no results
-            }
+    searchInput.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        const query = this.value;
+
+        if (query.length < 2) {
+            searchResults.innerHTML = '';
+            return;
+        }
+
+        timeoutId = setTimeout(() => {
+            fetch(`/api/search-nasabah-penarikan?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResults.innerHTML = '';
+
+                    if (data.length === 0) {
+                        searchResults.innerHTML = '<div class="list-group-item">Tidak ada hasil</div>';
+                        return;
+                    }
+
+                    data.forEach(nasabah => {
+                        const div = document.createElement('div');
+                        div.className = 'list-group-item list-group-item-action';
+                        div.innerHTML = `${nasabah.id_nasabah} - ${nasabah.nama}`;
+                        div.addEventListener('click', () => {
+                            document.getElementById('nasabah_id').value = nasabah.id;
+                            document.getElementById('nama_nasabah').value = nasabah.nama;
+                            document.getElementById('kelas').value = nasabah.kelas;
+                            searchInput.value = `${nasabah.id_nasabah} - ${nasabah.nama}`;
+                            searchResults.innerHTML = '';
+                        });
+                        searchResults.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    searchResults.innerHTML = '<div class="list-group-item text-danger">Terjadi kesalahan</div>';
+                });
+        }, 300);
+    });
+
+    // Close search results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.innerHTML = '';
         }
     });
 });

@@ -93,6 +93,27 @@ class PenarikanController extends Controller
         return $pdf->stream('slip-penarikan-' . $penarikan->id_penarikan . '.pdf');
     }
 
+    public function searchAjax(Request $request)
+    {
+        $query = $request->get('query');
+        
+        // Log untuk debugging
+        \Log::info('Search query for penarikan received: ' . $query);
+        
+        $nasabahs = Nasabah::where(function($q) use ($query) {
+            $q->where('id_nasabah', 'like', "{$query}%")
+              ->orWhere('id_nasabah', 'like', "%{$query}%")
+              ->orWhere('nama', 'like', "%{$query}%");
+        })
+        ->select('id', 'id_nasabah', 'nama', 'kelas', 'jurusan', 'angka_kelas')
+        ->limit(10)
+        ->get();
+        
+        // Log hasil pencarian
+        \Log::info('Search results for penarikan count: ' . $nasabahs->count());
+        
+        return response()->json($nasabahs);
+    }
     public function search(Request $request)
     {
         $query = Penarikan::query();

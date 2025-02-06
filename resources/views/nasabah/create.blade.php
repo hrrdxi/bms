@@ -91,7 +91,7 @@
             <label for="kelas_type" class="form-label">Tipe Kelas</label>
             <select class="form-control @error('kelas_type') is-invalid @enderror" id="kelas_type" name="kelas_type" required>
                 <option value="regular" {{ old('kelas_type') == 'regular' ? 'selected' : '' }}>Regular</option>
-                <option value="order" {{ old('kelas_type') == 'order' ? 'selected' : '' }}>Order</option>
+                <option value="order" {{ old('kelas_type') == 'order' ? 'selected' : '' }}>Other</option>
             </select>
             @error('kelas_type')
                 <span class="invalid-feedback">{{ $message }}</span>

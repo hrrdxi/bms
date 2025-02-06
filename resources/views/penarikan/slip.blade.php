@@ -76,7 +76,7 @@
 }
 
         .logo {
-        max-width: 350px;
+        max-width: 400px;
         height: auto;
         opacity: 0.6; /* Nilai opacity diubah menjadi 0.6 untuk efek samar */
         filter: blur(2px) brightness(0.9); /* Tambahkan efek blur ringan dan kurangi kecerahan */

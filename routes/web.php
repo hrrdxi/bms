@@ -44,7 +44,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 //CRUD PENARIKAN
 Route::get('/penarikan.index', [PenarikanController::class, 'index'])->name('penarikan.index');
 Route::get('/penarikan/create', [PenarikanController::class, 'create'])->name('penarikan.create');
-Route::post('/penarikan', [PenarikanController::class, 'store'])->name('penarikan.store');
+Route::post('/penarikan/store', [PenarikanController::class, 'store'])->name('penarikan.store');
 Route::get('/penarikan/{penarikan}/edit', [PenarikanController::class, 'edit'])->name('penarikan.edit');
 Route::put('/penarikan/{penarikan}', [PenarikanController::class, 'update'])->name('penarikan.update');
 Route::delete('/penarikan/{penarikan}', [PenarikanController::class, 'destroy'])->name('penarikan.destroy');
