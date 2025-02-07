@@ -32,7 +32,7 @@
 
         <div class="mb-3">
             <label for="foto_kartu_pelajar" class="form-label">Foto Kartu Pelajar</label>
-            <input type="file" class="form-control @error('foto_kartu_pelajar') is-invalid @enderror" id="foto_kartu_pelajar" name="foto_kartu_pelajar" accept="image/*" required>
+            <input type="file" class="form-control @error('foto_kartu_pelajar') is-invalid @enderror" id="foto_kartu_pelajar" name="foto_kartu_pelajar" accept="image/*">
             @error('foto_kartu_pelajar')
                 <span class="invalid-feedback">{{ $message }}</span>
             @enderror
@@ -150,7 +150,7 @@
         </div>
 
         <div id="order_kelas_field" class="mb-3" style="display: none;">
-            <label for="kelas_order" class="form-label">Kelas (Order)</label>
+            <label for="kelas_order" class="form-label">Kelas (Other)</label>
             <input type="text" class="form-control @error('kelas_order') is-invalid @enderror" id="kelas_order" name="kelas_order" value="{{ old('kelas_order') }}">
             @error('kelas_order')
                 <span class="invalid-feedback">{{ $message }}</span>

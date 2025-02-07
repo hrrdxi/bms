@@ -30,73 +30,71 @@ class NasabahController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $rules = [
-            'nama' => 'required|string|max:255',
-            'foto_kartu_pelajar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'no_identitas' => 'required|string|max:255|unique:nasabahs,no_identitas',
-            'jenis_kelamin' => 'required|string',
-            'tempat_lahir' => 'required|string|max:255',
-            'tanggal_lahir' => 'required|date',
-            'no_telepon' => 'required|string|max:15',
-            'kelas_type' => 'required|in:regular,order',
-            'saldo' => 'required|numeric',
-        ];
+{
+    $rules = [
+        'nama' => 'required|string|max:255',
+        'foto_kartu_pelajar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'no_identitas' => 'required|string|max:255|unique:nasabahs,no_identitas',
+        'jenis_kelamin' => 'required|string',
+        'tempat_lahir' => 'required|string|max:255',
+        'tanggal_lahir' => 'required|date',
+        'no_telepon' => 'required|string|max:15',
+        'kelas_type' => 'required|in:regular,order',
+        'saldo' => 'required|numeric',
+    ];
 
-        if ($request->kelas_type === 'regular') {
-            $rules['kelas'] = 'required|string';
-            $rules['jurusan'] = 'required|string';
-            $rules['angka_kelas'] = 'required';
-        } else {
-            $rules['kelas_order'] = 'required|string';
-        }
-
-        $request->validate($rules);
-
-        if ($request->hasFile('foto_kartu_pelajar')) {
-            $fotoKartuPelajarPath = $request->file('foto_kartu_pelajar')
-                ->store('foto_kartu_pelajar', 'public');
-            $fotoKartuPelajarPath = str_replace('public/', '', $fotoKartuPelajarPath);
-        }
-
-        $prefix = 'AM2';
-        if ($request->kelas_type === 'regular') {
-            $jurusanPPLG = ['PPLG', 'AN', 'TJKT', 'DKV'];
-            $prefix = in_array($request->jurusan, $jurusanPPLG) ? 'AM1' : 'AM2';
-        }
-
-        $lastFourDigits = substr($request->no_telepon, -4);
-        $yearAndMonth = date('Ymd', strtotime($request->tanggal_lahir));
-        $id_nasabah = $prefix . '-' . $lastFourDigits . $yearAndMonth;
-
-        $data = [
-            'id_nasabah' => $id_nasabah,
-            'nama' => $request->nama,
-            'foto_kartu_pelajar' => $fotoKartuPelajarPath,
-            'no_identitas' => $request->no_identitas,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'tempat_lahir' => $request->tempat_lahir,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'no_telepon' => $request->no_telepon,
-            'saldo' => $request->saldo,
-        ];
-
-        if ($request->kelas_type === 'regular') {
-            $data['kelas'] = $request->kelas;
-            $data['jurusan'] = $request->jurusan;
-            $data['angka_kelas'] = $request->angka_kelas !== 'Tidak Ada' ? 
-                $request->angka_kelas : null;
-        } else {
-            $data['kelas'] = $request->kelas_order;
-            $data['jurusan'] = null;
-            $data['angka_kelas'] = null;
-        }
-
-        Nasabah::create($data);
-
-        return redirect()->route('nasabah.index')
-            ->with('success', 'Nasabah berhasil ditambahkan.');
+    if ($request->kelas_type === 'regular') {
+        $rules['kelas'] = 'required|string';
+        $rules['jurusan'] = 'required|string';
+        $rules['angka_kelas'] = 'required';
+    } else {
+        $rules['kelas_order'] = 'required|string';
     }
+
+    // Logika pembuatan ID nasabah
+    $prefix = 'AM'; // Default prefix untuk "order"
+    if ($request->kelas_type === 'regular') {
+        $jurusanPPLG = ['PPLG', 'AN', 'TJKT', 'DKV'];
+        $prefix = in_array($request->jurusan, $jurusanPPLG) ? 'AM1' : 'AM2';
+    }
+
+    $lastFourDigits = substr($request->no_telepon, -4);
+    $yearAndMonth = date('Ymd', strtotime($request->tanggal_lahir));
+    $id_nasabah = $prefix . '-' . $lastFourDigits . $yearAndMonth;
+
+    $data = [
+        'id_nasabah' => $id_nasabah,
+        'nama' => $request->nama,
+        'no_identitas' => $request->no_identitas,
+        'jenis_kelamin' => $request->jenis_kelamin,
+        'tempat_lahir' => $request->tempat_lahir,
+        'tanggal_lahir' => $request->tanggal_lahir,
+        'no_telepon' => $request->no_telepon,
+        'saldo' => $request->saldo,
+    ];
+    
+    if ($request->hasFile('foto_kartu_pelajar')) {
+        $fotoKartuPelajarPath = $request->file('foto_kartu_pelajar')
+            ->store('foto_kartu_pelajar', 'public');
+        $data['foto_kartu_pelajar'] = str_replace('public/', '', $fotoKartuPelajarPath);
+    }
+
+    if ($request->kelas_type === 'regular') {
+        $data['kelas'] = $request->kelas;
+        $data['jurusan'] = $request->jurusan;
+        $data['angka_kelas'] = $request->angka_kelas !== 'Tidak Ada' ? 
+            $request->angka_kelas : null;
+    } else {
+        $data['kelas'] = $request->kelas_order;
+        $data['jurusan'] = null;
+        $data['angka_kelas'] = null;
+    }
+
+    Nasabah::create($data);
+
+    return redirect()->route('nasabah.index')
+        ->with('success', 'Nasabah berhasil ditambahkan.');
+}
 
     public function show($id)
     {
@@ -142,7 +140,8 @@ class NasabahController extends Controller
             $validated['foto_kartu_pelajar'] = $fotoKartuPelajarPath;
         }
 
-        $prefix = 'AM2';
+        // Logika pembuatan ID nasabah
+        $prefix = 'AM'; // Default prefix untuk "order"
         if ($request->kelas_type === 'regular') {
             $jurusanPPLG = ['PPLG', 'AN', 'TJKT', 'DKV'];
             $prefix = in_array($request->jurusan, $jurusanPPLG) ? 'AM1' : 'AM2';
@@ -183,7 +182,6 @@ class NasabahController extends Controller
         return redirect()->route('nasabah.index')
             ->with('success', 'Data nasabah berhasil diperbarui.');
     }
-
     public function destroy(Nasabah $nasabah)
     {
         $nasabah->delete();
