@@ -16,15 +16,15 @@
 
     <form action="{{ route('setoran.store') }}" method="POST">
         @csrf
-        <!-- Search input for nasabah -->
         <div class="form-group">
             <label>Cari Nasabah</label>
-            <div class="input-group">
+            <div class="position-relative">
                 <input type="text" id="search_nasabah" class="form-control" placeholder="Masukkan ID atau nama nasabah..." autocomplete="off">
                 <input type="hidden" name="nasabah_id" id="nasabah_id" required>
+                <div id="search_results" class="list-group mt-2" style="position: absolute; z-index: 1000; width: 100%;"></div>
             </div>
-            <div id="search_results" class="list-group mt-2" style="position: absolute; z-index: 1000; width: 95%;"></div>
         </div>
+        
 
         <!-- Automatically filled fields -->
         <div class="form-group">
