@@ -89,6 +89,19 @@
         </div>
 
         <div class="mb-3">
+            <label for="jenis_tabungan" class="form-label">Jenis Tabungan</label>
+            <select class="form-control @error('jenis_tabungan') is-invalid @enderror" id="jenis_tabungan" name="jenis_tabungan" required>
+                <option value="" disabled>Pilih Jenis Tabungan</option>
+                <option value="Wadiah" {{ old('jenis_tabungan', $nasabah->jenis_tabungan) == 'Wadiah' ? 'selected' : '' }}>Wadiah</option>
+                <option value="Mudharabah" {{ old('jenis_tabungan', $nasabah->jenis_tabungan) == 'Mudharabah' ? 'selected' : '' }}>Mudharabah</option>
+                <option value="Deposito Mudharabah" {{ old('jenis_tabungan', $nasabah->jenis_tabungan) == 'Deposito Mudharabah' ? 'selected' : '' }}>Deposito Mudharabah</option>
+            </select>
+            @error('jenis_tabungan')
+                <span class="invalid-feedback">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="mb-3">
             <label for="kelas_type" class="form-label">Tipe Kelas</label>
             <select class="form-control @error('kelas_type') is-invalid @enderror" id="kelas_type" name="kelas_type" required>
                 <option value="regular" {{ (!$nasabah->jurusan) ? '' : 'selected' }}>Regular</option>

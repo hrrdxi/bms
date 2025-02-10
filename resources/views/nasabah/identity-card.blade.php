@@ -58,7 +58,7 @@
         }
         .title {
             color: #0B6623;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: bold;
             margin: 0;
             padding-top: 10px;
@@ -124,6 +124,9 @@
                     <span class="label">ID NASABAH</span>: {{ $nasabah->id_nasabah }}
                 </div>
                 <div class="info-row">
+                    <span class="label">JENIS TABUNGAN</span>: {{ $nasabah->jenis_tabungan }}
+                </div>
+                <div class="info-row">
                     <span class="label">KELAS</span>: {{ $nasabah->kelas }} {{ $nasabah->jurusan }} {{ $nasabah->angka_kelas }}
                 </div>
                 <div class="info-row">
@@ -132,6 +135,7 @@
                 <div class="info-row">
                     <span class="label">PHONE</span>: {{ $nasabah->no_telepon }}
                 </div>
+                
             </div>
 
             <!-- QR Code -->

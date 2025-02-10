@@ -13,16 +13,17 @@ class Nasabah extends Model
     protected $fillable = [
         'id_nasabah',
         'nama',
-        'foto_kartu_pelajar',
-        'no_identitas',
         'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
         'no_telepon',
         'kelas',
         'jurusan',
-        'saldo',
+        'no_identitas',
+        'foto_kartu_pelajar',
         'angka_kelas',
+        'jenis_tabungan',
+        'saldo'
     ];
     
     /**

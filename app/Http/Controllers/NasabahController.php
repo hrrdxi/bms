@@ -26,75 +26,80 @@ class NasabahController extends Controller
     {
         $classes = ['X', 'XI', 'XII'];
         $majors = ['PPLG', 'AN', 'TJKT', 'DKV', 'AKL', 'BR', 'LPS', 'DPB', 'MP'];
-        return view('nasabah.create', compact('classes', 'majors'));
+        $jenisTabungan = ['Wadiah', 'Mudharabah', 'Deposito Mudharabah'];
+        return view('nasabah.create', compact('classes', 'majors', 'jenisTabungan'));
     }
 
     public function store(Request $request)
-{
-    $rules = [
-        'nama' => 'required|string|max:255',
-        'foto_kartu_pelajar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'no_identitas' => 'required|string|max:255|unique:nasabahs,no_identitas',
-        'jenis_kelamin' => 'required|string',
-        'tempat_lahir' => 'required|string|max:255',
-        'tanggal_lahir' => 'required|date',
-        'no_telepon' => 'required|string|max:15',
-        'kelas_type' => 'required|in:regular,order',
-        'saldo' => 'required|numeric',
-    ];
+    {
+        $rules = [
+            'nama' => 'required|string|max:255',
+            'foto_kartu_pelajar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'no_identitas' => 'required|string|max:255|unique:nasabahs,no_identitas',
+            'jenis_kelamin' => 'required|string',
+            'tempat_lahir' => 'required|string|max:255',
+            'tanggal_lahir' => 'required|date',
+            'no_telepon' => 'required|string|max:15',
+            'kelas_type' => 'required|in:regular,order',
+            'saldo' => 'required|numeric',
+            'jenis_tabungan' => 'required|in:Wadiah,Mudharabah,Deposito Mudharabah',
+        ];
 
-    if ($request->kelas_type === 'regular') {
-        $rules['kelas'] = 'required|string';
-        $rules['jurusan'] = 'required|string';
-        $rules['angka_kelas'] = 'required';
-    } else {
-        $rules['kelas_order'] = 'required|string';
+        if ($request->kelas_type === 'regular') {
+            $rules['kelas'] = 'required|string';
+            $rules['jurusan'] = 'required|string';
+            $rules['angka_kelas'] = 'required';
+        } else {
+            $rules['kelas_order'] = 'required|string';
+        }
+
+        $validated = $request->validate($rules);
+
+        // Logika pembuatan ID nasabah
+        $prefix = 'AM'; // Default prefix untuk "order"
+        if ($request->kelas_type === 'regular') {
+            $jurusanPPLG = ['PPLG', 'AN', 'TJKT', 'DKV'];
+            $prefix = in_array($request->jurusan, $jurusanPPLG) ? 'AM1' : 'AM2';
+        }
+
+        $lastFourDigits = substr($request->no_telepon, -4);
+        $yearAndMonth = date('Ymd', strtotime($request->tanggal_lahir));
+        $id_nasabah = $prefix . '-' . $lastFourDigits . $yearAndMonth;
+
+        $data = [
+            'id_nasabah' => $id_nasabah,
+            'nama' => $request->nama,
+            'no_identitas' => $request->no_identitas,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'no_telepon' => $request->no_telepon,
+            'saldo' => $request->saldo,
+            'jenis_tabungan' => $request->jenis_tabungan,
+        ];
+        
+        if ($request->hasFile('foto_kartu_pelajar')) {
+            $fotoKartuPelajarPath = $request->file('foto_kartu_pelajar')
+                ->store('foto_kartu_pelajar', 'public');
+            $data['foto_kartu_pelajar'] = str_replace('public/', '', $fotoKartuPelajarPath);
+        }
+
+        if ($request->kelas_type === 'regular') {
+            $data['kelas'] = $request->kelas;
+            $data['jurusan'] = $request->jurusan;
+            $data['angka_kelas'] = $request->angka_kelas !== 'Tidak Ada' ? 
+                $request->angka_kelas : null;
+        } else {
+            $data['kelas'] = $request->kelas_order;
+            $data['jurusan'] = null;
+            $data['angka_kelas'] = null;
+        }
+
+        Nasabah::create($data);
+
+        return redirect()->route('nasabah.index')
+            ->with('success', 'Nasabah berhasil ditambahkan.');
     }
-
-    // Logika pembuatan ID nasabah
-    $prefix = 'AM'; // Default prefix untuk "order"
-    if ($request->kelas_type === 'regular') {
-        $jurusanPPLG = ['PPLG', 'AN', 'TJKT', 'DKV'];
-        $prefix = in_array($request->jurusan, $jurusanPPLG) ? 'AM1' : 'AM2';
-    }
-
-    $lastFourDigits = substr($request->no_telepon, -4);
-    $yearAndMonth = date('Ymd', strtotime($request->tanggal_lahir));
-    $id_nasabah = $prefix . '-' . $lastFourDigits . $yearAndMonth;
-
-    $data = [
-        'id_nasabah' => $id_nasabah,
-        'nama' => $request->nama,
-        'no_identitas' => $request->no_identitas,
-        'jenis_kelamin' => $request->jenis_kelamin,
-        'tempat_lahir' => $request->tempat_lahir,
-        'tanggal_lahir' => $request->tanggal_lahir,
-        'no_telepon' => $request->no_telepon,
-        'saldo' => $request->saldo,
-    ];
-    
-    if ($request->hasFile('foto_kartu_pelajar')) {
-        $fotoKartuPelajarPath = $request->file('foto_kartu_pelajar')
-            ->store('foto_kartu_pelajar', 'public');
-        $data['foto_kartu_pelajar'] = str_replace('public/', '', $fotoKartuPelajarPath);
-    }
-
-    if ($request->kelas_type === 'regular') {
-        $data['kelas'] = $request->kelas;
-        $data['jurusan'] = $request->jurusan;
-        $data['angka_kelas'] = $request->angka_kelas !== 'Tidak Ada' ? 
-            $request->angka_kelas : null;
-    } else {
-        $data['kelas'] = $request->kelas_order;
-        $data['jurusan'] = null;
-        $data['angka_kelas'] = null;
-    }
-
-    Nasabah::create($data);
-
-    return redirect()->route('nasabah.index')
-        ->with('success', 'Nasabah berhasil ditambahkan.');
-}
 
     public function show($id)
     {
@@ -106,7 +111,8 @@ class NasabahController extends Controller
     {
         $classes = ['X', 'XI', 'XII'];
         $majors = ['PPLG', 'AN', 'TJKT', 'DKV', 'AKL', 'BR', 'LPS', 'DPB', 'MP'];
-        return view('nasabah.edit', compact('nasabah', 'classes', 'majors'));
+        $jenisTabungan = ['Wadiah', 'Mudharabah', 'Deposito Mudharabah'];
+        return view('nasabah.edit', compact('nasabah', 'classes', 'majors', 'jenisTabungan'));
     }
 
     public function update(Request $request, Nasabah $nasabah)
@@ -121,6 +127,7 @@ class NasabahController extends Controller
             'kelas_type' => 'required|in:regular,order',
             'saldo' => 'required|numeric|min:0',
             'foto_kartu_pelajar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'jenis_tabungan' => 'required|in:Wadiah,Mudharabah,Deposito Mudharabah',
         ];
 
         if ($request->kelas_type === 'regular') {
@@ -160,6 +167,7 @@ class NasabahController extends Controller
             'tanggal_lahir' => $validated['tanggal_lahir'],
             'no_telepon' => $validated['no_telepon'],
             'saldo' => $validated['saldo'],
+            'jenis_tabungan' => $validated['jenis_tabungan'],
         ];
 
         if (isset($validated['foto_kartu_pelajar'])) {
@@ -182,6 +190,7 @@ class NasabahController extends Controller
         return redirect()->route('nasabah.index')
             ->with('success', 'Data nasabah berhasil diperbarui.');
     }
+
     public function destroy(Nasabah $nasabah)
     {
         $nasabah->delete();
@@ -256,27 +265,24 @@ class NasabahController extends Controller
         }
     }
 
-    // Method untuk pencarian AJAX
     public function searchAjax(Request $request)
     {
-    $query = $request->get('query');
-    
-    // Log untuk debugging
-    \Log::info('Search query received: ' . $query);
-    
-    $nasabahs = Nasabah::where(function($q) use ($query) {
-        $q->where('id_nasabah', 'like', "{$query}%")  // Mencari yang dimulai dengan query
-          ->orWhere('id_nasabah', 'like', "%{$query}%")  // Mencari yang mengandung query
-          ->orWhere('nama', 'like', "%{$query}%");
-    })
-    ->select('id', 'id_nasabah', 'nama', 'kelas', 'jurusan', 'angka_kelas')
-    ->limit(10)
-    ->get();
-    
-    // Log hasil pencarian
-    \Log::info('Search results count: ' . $nasabahs->count());
-    
-    return response()->json($nasabahs);
+        $query = $request->get('query');
+        
+        \Log::info('Search query received: ' . $query);
+        
+        $nasabahs = Nasabah::where(function($q) use ($query) {
+            $q->where('id_nasabah', 'like', "{$query}%")
+              ->orWhere('id_nasabah', 'like', "%{$query}%")
+              ->orWhere('nama', 'like', "%{$query}%");
+        })
+        ->select('id', 'id_nasabah', 'nama', 'kelas', 'jurusan', 'angka_kelas', 'jenis_tabungan')
+        ->limit(10)
+        ->get();
+        
+        \Log::info('Search results count: ' . $nasabahs->count());
+        
+        return response()->json($nasabahs);
     }
 
     public function search(Request $request)
@@ -302,5 +308,4 @@ class NasabahController extends Controller
 
         return view('nasabah', compact('nasabahs'));
     }
-    
 }

@@ -157,6 +157,20 @@
             @enderror
         </div>
 
+        <!-- Tambahkan field jenis tabungan di sini -->
+        <div class="mb-3">
+            <label for="jenis_tabungan" class="form-label">Jenis Tabungan</label>
+            <select class="form-control @error('jenis_tabungan') is-invalid @enderror" id="jenis_tabungan" name="jenis_tabungan" required>
+                <option value="" disabled selected>Pilih Jenis Tabungan</option>
+                <option value="Wadiah" {{ old('jenis_tabungan') == 'Wadiah' ? 'selected' : '' }}>Wadiah</option>
+                <option value="Mudharabah" {{ old('jenis_tabungan') == 'Mudharabah' ? 'selected' : '' }}>Mudharabah</option>
+                <option value="Deposito Mudharabah" {{ old('jenis_tabungan') == 'Deposito Mudharabah' ? 'selected' : '' }}>Deposito Mudharabah</option>
+            </select>
+            @error('jenis_tabungan')
+                <span class="invalid-feedback">{{ $message }}</span>
+            @enderror
+        </div>
+
         <div class="mb-3">
             <label for="saldo" class="form-label">Saldo Awal</label>
             <input type="number" class="form-control @error('saldo') is-invalid @enderror" id="saldo" name="saldo" value="{{ old('saldo', 0) }}" required>

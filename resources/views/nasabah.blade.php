@@ -85,20 +85,20 @@
             <i class="fas fa-file-export"></i> Export Data Nasabah
         </a>
 
-<form action="{{ route('nasabah.search') }}" method="GET" class="mb-3">
-    <div class="input-group">
-        <input type="text" name="search" class="form-control" placeholder="Cari Nama atau ID Nasabah" 
-               value="{{ request('search') }}">
-        <div class="input-group-append">
-            <button class="btn btn-primary" type="submit">
-                <i class="fas fa-search"></i> Cari
-            </button>
-            <a href="{{ route('nasabah.search') }}" class="btn btn-secondary">
-                <i class="fas fa-reset"></i> Reset
-            </a>
-        </div>
-    </div>
-</form>
+        <form action="{{ route('nasabah.search') }}" method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cari Nama atau ID Nasabah" 
+                       value="{{ request('search') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                    <a href="{{ route('nasabah.search') }}" class="btn btn-secondary">
+                        <i class="fas fa-reset"></i> Reset
+                    </a>
+                </div>
+            </div>
+        </form>
     </div>
 
     <div class="table-responsive">
@@ -107,6 +107,7 @@
                 <tr>
                     <th>No</th>
                     <th>ID Nasabah</th>
+                    <th>Jenis Tabungan</th>
                     <th>Nama</th>
                     <th>Jenis Kelamin</th>
                     <th>Nomor Identitas (NIS)</th>
@@ -121,6 +122,7 @@
                     <tr>
                         <td>{{ ($nasabahs->currentPage() - 1) * $nasabahs->perPage() + $loop->iteration }}</td>
                         <td>{{ $nasabah->id_nasabah }}</td>
+                        <td>{{ $nasabah->jenis_tabungan }}</td>
                         <td>{{ $nasabah->nama }}</td>
                         <td>{{ $nasabah->jenis_kelamin }}</td>
                         <td>{{ $nasabah->no_identitas }}</td>

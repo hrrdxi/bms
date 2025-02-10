@@ -34,7 +34,7 @@
                 justify-content: center;
                 align-items: center;
                 min-height: 100vh;
-                padding: 50px;
+                padding: 40px;
             }
 
             .right-content {
@@ -66,7 +66,7 @@
                 top: 0px;
                 left: 0px;
                 background: rgb(255, 255, 255);
-                padding: 20px 35px;
+                padding: 30px 40px;
                 border-radius: 0 20px 20px 0;
                 display: flex;
                 align-items: center;
@@ -76,7 +76,7 @@
             }
 
             .logo {
-                height: 35px;
+                height: 50px;
                 object-fit: contain;
             }
 
@@ -153,7 +153,7 @@
                 }
 
                 .logo {
-                    height: 25px;
+                    height: 40px;
                 }
             }
         </style>
@@ -163,6 +163,7 @@
             <div class="logo-container">
                 <img src="{{ asset('asset/image/legepeges.png') }}" alt="Logo 1" class="logo">
                 <img src="{{ asset('asset/image/logosmk-wide.png') }}" alt="Logo 2" class="logo">
+                <img src="{{ asset('asset/image/AM_BANK_LOGO-removebg-preview.png') }}" alt="Logo 2" class="logo">
             </div>
             {{ $slot }}
         </div>

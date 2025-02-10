@@ -82,48 +82,54 @@
                                 Informasi Pribadi
                             </h5>
                         </div>
-                        <div class="card-body">
-                            <div class="row g-3">
+                        <div class="card-body p-4">
+                            <div class="row g-4">
                                 <div class="col-md-6">
-                                    <div class="info-group">
-                                        <label class="text-muted small">ID Nasabah</label>
-                                        <p class="mb-0 fw-medium">{{ $nasabah->id_nasabah }}</p>
+                                    <div class="info-group bg-gray-50 p-3 rounded">
+                                        <label class="text-gray-500 text-sm mb-1">ID Nasabah</label>
+                                        <p class="mb-0 font-medium">{{ $nasabah->id_nasabah }}</p>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="info-group">
-                                        <label class="text-muted small">Nama Lengkap</label>
-                                        <p class="mb-0 fw-medium">{{ $nasabah->nama }}</p>
+                                    <div class="info-group bg-gray-50 p-3 rounded">
+                                        <label class="text-gray-500 text-sm mb-1">Nama Lengkap</label>
+                                        <p class="mb-0 font-medium">{{ $nasabah->nama }}</p>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="info-group">
-                                        <label class="text-muted small">NIS</label>
-                                        <p class="mb-0 fw-medium">{{ $nasabah->no_identitas }}</p>
+                                    <div class="info-group bg-gray-50 p-3 rounded">
+                                        <label class="text-gray-500 text-sm mb-1">NIS</label>
+                                        <p class="mb-0 font-medium">{{ $nasabah->no_identitas }}</p>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="info-group">
-                                        <label class="text-muted small">Kelas</label>
-                                        <p class="mb-0 fw-medium">{{ $nasabah->kelas }} {{ $nasabah->jurusan }} {{ $nasabah->angka_kelas }}</p>
+                                    <div class="info-group bg-gray-50 p-3 rounded">
+                                        <label class="text-gray-500 text-sm mb-1">Kelas</label>
+                                        <p class="mb-0 font-medium">{{ $nasabah->kelas }} {{ $nasabah->jurusan }} {{ $nasabah->angka_kelas }}</p>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="info-group">
-                                        <label class="text-muted small">Jenis Kelamin</label>
-                                        <p class="mb-0 fw-medium">{{ $nasabah->jenis_kelamin }}</p>
+                                    <div class="info-group bg-gray-50 p-3 rounded">
+                                        <label class="text-gray-500 text-sm mb-1">Jenis Kelamin</label>
+                                        <p class="mb-0 font-medium">{{ $nasabah->jenis_kelamin }}</p>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="info-group">
-                                        <label class="text-muted small">No. Telepon</label>
-                                        <p class="mb-0 fw-medium">{{ $nasabah->no_telepon }}</p>
+                                    <div class="info-group bg-gray-50 p-3 rounded">
+                                        <label class="text-gray-500 text-sm mb-1">No. Telepon</label>
+                                        <p class="mb-0 font-medium">{{ $nasabah->no_telepon }}</p>
                                     </div>
                                 </div>
-                                <div class="col-12">
-                                    <div class="info-group">
-                                        <label class="text-muted small">Tempat, Tanggal Lahir</label>
-                                        <p class="mb-0 fw-medium">
+                                <div class="col-md-6">
+                                    <div class="info-group bg-gray-50 p-3 rounded">
+                                        <label class="text-gray-500 text-sm mb-1">Jenis Tabungan</label>
+                                        <p class="mb-0 font-medium">{{ $nasabah->jenis_tabungan }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-group bg-gray-50 p-3 rounded">
+                                        <label class="text-gray-500 text-sm mb-1">Tempat, Tanggal Lahir</label>
+                                        <p class="mb-0 font-medium">
                                             {{ $nasabah->tempat_lahir }}, 
                                             {{ \Carbon\Carbon::parse($nasabah->tanggal_lahir)->format('d F Y') }}
                                         </p>
