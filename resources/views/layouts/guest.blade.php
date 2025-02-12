@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <title>@yield('title', 'Login')</title>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>{{ config('app.name', 'Laravel') }}</title>
         
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         
@@ -66,8 +66,8 @@
                 top: 0px;
                 left: 0px;
                 background: rgb(255, 255, 255);
-                padding: 30px 40px;
-                border-radius: 0 20px 20px 0;
+                padding: 10px 5px;
+                border-radius: 0 15px 15px 0;
                 display: flex;
                 align-items: center;
                 gap: 10px;
@@ -76,13 +76,14 @@
             }
 
             .logo {
-                height: 50px;
+                height: 45px;
                 object-fit: contain;
+                margin-left: 2px;
             }
 
             .login-form-container {
                 width: 100%;
-                max-width: 400px; /* Ukuran form yang lebih kecil */
+                max-width: 350px; /* Ukuran form yang lebih kecil */
                 padding: 0 20px;
             }
 
