@@ -10,7 +10,7 @@
         .table {
             width: 100%;
             table-layout: auto;
-            font-size: 14px;
+            font-size: 12px;
         }
         .table thead {
             background-color: #00a1e0;
@@ -60,6 +60,121 @@
                 font-size: 12px;
             }
         }
+        .btn-action {
+    min-width: 100px;
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px; /* Jarak ikon dan teks */
+}
+
+.d-flex.flex-wrap.gap-2 {
+    gap: 12px;
+}
+
+/* ======== Styling Form Search ======== */
+.input-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.input-group .form-control {
+    flex-grow: 1;
+    min-width: 100px;
+    padding: 8px 10px;
+    border-radius: 5px;
+}
+
+.input-group .btn {
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.table .action-buttons {
+    display: flex;
+    gap: 3px;  /* Mengurangi jarak antar tombol */
+    justify-content: flex-start;
+}
+
+.table .btn-action {
+    padding: 3px 6px;  /* Mengurangi padding */
+    font-size: 11px;   /* Memperkecil ukuran font */
+    min-width: 55px;   /* Mengurangi lebar minimum */
+    height: 24px;      /* Mengatur tinggi tetap */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table .btn-action i {
+    font-size: 10px;    /* Memperkecil ukuran icon */
+    margin-right: 3px;  /* Mengurangi jarak icon dengan teks */
+}
+
+/* Menyesuaikan ukuran tombol form hapus */
+.table form {
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+.table .btn-danger.btn-action {
+    margin: 0;
+    border: none;
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+    .table .action-buttons {
+        flex-direction: row;  /* Tetap dalam satu baris */
+        gap: 2px;            /* Jarak lebih kecil pada mobile */
+    }
+    
+    .table .btn-action {
+        padding: 2px 4px;
+        font-size: 10px;
+    }
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+    .table td, .table th {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    .btn-action {
+        min-width: 100px;
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .input-group .form-control {
+        min-width: 100%;
+    }
+
+    .input-group .btn {
+        width: 100%;
+    }
+    
+}
     </style>
 </head>
 
@@ -73,32 +188,35 @@
     @endif
 
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        <div>
-            <a href="{{ route('nasabah.create') }}" class="btn btn-success btn-action mb-2">
-                <i class="fas fa-plus"></i> Tambah Nasabah
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('nasabah.create') }}" class="btn btn-success btn-action">
+                <i class="fas fa-plus"></i> Tambah
             </a>
-            <a href="{{ route('nasabah.cekSemua') }}" class="btn btn-primary btn-action mb-2">
-                <i class="fas fa-eye"></i> Cek Semua Nasabah
+            <a href="{{ route('nasabah.cekSemua') }}" class="btn btn-primary btn-action">
+                <i class="fas fa-eye"></i> Semua
             </a>
-        </div>
-        <a href="" class="btn btn-warning mb-2">
-            <i class="fas fa-file-export"></i> Export Data Nasabah
-        </a>
+            <a href="#" class="btn btn-warning btn-action">
+                <i class="fas fa-file-export"></i> Export
+            </a>
+        </div>        
 
-        <form action="{{ route('nasabah.search') }}" method="GET" class="mb-3">
+        <form action="{{ route('nasabah.search') }}" method="GET" class="d-flex flex-grow-1">
             <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Cari Nama atau ID Nasabah" 
+                <input type="text" 
+                       name="search" 
+                       class="form-control" 
+                       placeholder="Cari Nama atau ID Nasabah" 
                        value="{{ request('search') }}">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fas fa-search"></i> Cari
-                    </button>
-                    <a href="{{ route('nasabah.search') }}" class="btn btn-secondary">
-                        <i class="fas fa-reset"></i> Reset
-                    </a>
-                </div>
+        
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> Cari
+                </button>
+        
+                <a href="{{ route('nasabah.search') }}" class="btn btn-secondary">
+                    <i class="fas fa-undo"></i> Reset
+                </a>
             </div>
-        </form>
+        </form>        
     </div>
 
     <div class="table-responsive">
@@ -139,20 +257,24 @@
                         </td>                                                              
                         <td>Rp. {{ number_format($nasabah->saldo, 0, ',', '.') }}</td>
                         <td class="action-buttons">
-                            <a href="{{ route('nasabah.show', $nasabah->id) }}" class="btn btn-info btn-sm btn-action">
-                                <i class="fas fa-info-circle"></i>
+                            <a href="{{ route('nasabah.show', $nasabah->id) }}" 
+                               class="btn btn-info btn-sm btn-action">
+                                <i class="fas fa-info-circle"></i> Detail
                             </a>                            
-                            <a href="{{ route('nasabah.edit', $nasabah->id) }}" class="btn btn-warning btn-sm btn-action">
+                            <a href="{{ route('nasabah.edit', $nasabah->id) }}" 
+                               class="btn btn-warning btn-sm btn-action">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
                             <form action="{{ route('nasabah.destroy', $nasabah->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-danger btn-sm btn-action" onclick="return confirm('Apakah Anda yakin ingin menghapus nasabah ini?')">
+                                <button class="btn btn-danger btn-sm btn-action" 
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus nasabah ini?')">
                                     <i class="fas fa-trash"></i> Hapus
                                 </button>
                             </form>
                         </td>
+                        
                     </tr>
                 @endforeach
             </tbody>

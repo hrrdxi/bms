@@ -9,7 +9,7 @@
     .table {
         width: 100%;
         table-layout: auto;
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .table thead {
@@ -81,46 +81,120 @@
 
     .input-group {
     display: flex;
-    gap: 8px;
-    margin-bottom: 7px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
 }
 
 .input-group .form-control {
-    border-radius: 4px;
-    padding: 6px 12px;
-    margin-bottom: 7px;
+    flex-grow: 1; /* Agar input field menyesuaikan ukuran */
+    min-width: 250px;
+    padding: 8px 12px;
+    border-radius: 5px;
 }
 
-    @media (max-width: 768px) {
-        .table td, .table th {
-            font-size: 12px;
-            padding: 3px;
-        }
+.input-group .btn {
+    min-width: 100px; /* Agar tombol Cari dan Reset memiliki ukuran seragam */
+    padding: 8px 12x;
+    font-size: 14px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px; /* Jarak antara ikon dan teks */
+}
 
-        .table .action-buttons {
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .btn-action {
-            font-size: 12px;
-            padding: 3px 8px;
-        }
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+    .input-group {
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    .btn-action {
-        min-width: 120px; /* Agar tombol seragam */
-    }
-
-    .d-flex.flex-wrap.gap-2 .btn-action {
-        margin-right: 8px; /* Memberi jarak antar tombol */
-        margin-bottom: 8px; /* Jarak antar baris di layar kecil */
+    .input-group .form-control {
+        min-width: 100%;
     }
 
     .input-group .btn {
-        min-width: 100px; /* Ukuran tombol Cari dan Reset */
-        margin-right: 10px;
+        width: 100%; /* Agar tombol memenuhi lebar pada layar kecil */
     }
+}
+
+    .btn-action {
+    min-width: 40px; /* Agar tombol memiliki ukuran yang seragam */
+    padding: 8px 10px;
+    font-size: 13px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px; /* Jarak antara ikon dan teks */
+}
+
+.d-flex.flex-wrap.gap-2 {
+    gap: 12px; /* Jarak antar tombol lebih konsisten */
+}
+
+.input-group .btn {
+    min-width: 120px; /* Agar tombol cari dan reset seragam */
+}
+
+/* Styling khusus untuk button aksi dalam tabel */
+.table .action-buttons {
+    display: flex;
+    gap: 3px;  /* Jarak antar tombol diperkecil */
+    justify-content: flex-start;
+}
+
+.table .btn-action {
+    padding: 3px 6px;  /* Padding diperkecil */
+    font-size: 11px;   /* Ukuran font diperkecil */
+    min-width: 55px;   /* Lebar minimum diperkecil */
+    height: 24px;      /* Tinggi tetap */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table .btn-action i {
+    font-size: 10px;    /* Ukuran icon diperkecil */
+    margin-right: 3px;  /* Jarak icon dengan teks diperkecil */
+}
+
+/* Menyesuaikan tombol dalam form hapus */
+.table form {
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+.table .btn-danger.btn-action {
+    margin: 0;
+    border: none;
+}
+
+/* Responsif untuk mobile */
+@media (max-width: 768px) {
+    .table .action-buttons {
+        flex-direction: row;  
+        gap: 2px;            
+    }
+    
+    .table .btn-action {
+        padding: 2px 4px;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .btn-action {
+        min-width: 100px;
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}
+
 </style>
 
 <div class="container-fluid">
@@ -159,37 +233,39 @@
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
         <!-- Grup tombol aksi -->
-        <div class="d-flex flex-wrap gap-2 mb-2">
+        <div class="d-flex flex-wrap gap-2">
             <a href="{{ route('penarikan.create') }}" class="btn btn-success btn-action">
-                <i class="fas fa-plus"></i> Tambah Penarikan Uang
+                <i class="fas fa-plus"></i> Tambah
             </a>
             <a href="{{ route('penarikan.cekHariIni') }}" class="btn btn-primary btn-action">
-                <i class="fas fa-calendar-day"></i> Cek Hari Ini
+                <i class="fas fa-calendar-day"></i> Hari Ini
             </a>
             <a href="{{ route('penarikan.cekSemua') }}" class="btn btn-danger btn-action">
-                <i class="fas fa-eye"></i> Cek Semua Penarikan
+                <i class="fas fa-eye"></i> Semua
             </a>
             <a href="#" class="btn btn-warning btn-action">
-                <i class="fas fa-file-export"></i> Export Per Tanggal
+                <i class="fas fa-file-export"></i> Export
             </a>
         </div>
-
+    
         <form action="{{ route('penarikan.search') }}" method="GET" class="d-flex flex-grow-1">
             <div class="input-group">
                 <input type="text" 
                        name="search" 
                        class="form-control" 
-                       placeholder="Cari Nama atau ID penarikan" 
+                       placeholder="Cari Nama atau ID Penarikan" 
                        value="{{ request('search') }}">
+        
                 <button class="btn btn-primary" type="submit">
                     <i class="fas fa-search"></i> Cari
                 </button>
+        
                 <a href="{{ route('penarikan.search') }}" class="btn btn-secondary">
                     <i class="fas fa-undo"></i> Reset
                 </a>
             </div>
         </form>
-    </div>
+    </div>        
 
     <!-- Responsive table -->
     <div class="table-responsive">
@@ -218,20 +294,24 @@
                         <td>Rp. {{ number_format($penarikan->jumlah_penarikan, 0, ',', '.') }}</td>
                         <td class="action-buttons">
                             <a href="{{ route('penarikan.download-slip', $penarikan->id) }}" 
-                                class="btn btn-info btn-sm btn-action">
-                                 <i class="fas fa-download"></i> Slip
-                             </a>
-                            <a href="{{ route('penarikan.edit', $penarikan->id) }}" class="btn btn-warning btn-sm btn-action">
+                               class="btn btn-info btn-sm btn-action">
+                                <i class="fas fa-download"></i> Slip
+                            </a>
+                            <a href="{{ route('penarikan.edit', $penarikan->id) }}" 
+                               class="btn btn-warning btn-sm btn-action">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
-                            <form action="{{ route('penarikan.destroy', $penarikan->id) }}" method="POST" class="d-inline">
+                            <form action="{{ route('penarikan.destroy', $penarikan->id) }}" 
+                                  method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-danger btn-sm btn-action" onclick="return confirm('Yakin ingin menghapus?')">
+                                <button class="btn btn-danger btn-sm btn-action" 
+                                        onclick="return confirm('Yakin ingin menghapus?')">
                                     <i class="fas fa-trash-alt"></i> Hapus
                                 </button>
                             </form>
                         </td>
+                        
                     </tr>
                 @endforeach
             </tbody>

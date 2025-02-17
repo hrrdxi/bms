@@ -102,8 +102,8 @@
                             <p class="text-muted mb-1">Saldo Akhir</p>
                             <h3 class="mb-0">Rp {{ number_format($saldoAkhir ?? 0, 0, ',', '.') }}</h3>
                         </div>
-                        <div class="icon-container bg-info-subtle">
-                            <i class="bi bi-piggy-bank"></i>
+                        <div class="icon-container bg-info-subtle">                             
+                            <i class="bi bi-stack-overflow"></i>  
                         </div>
                     </div>
                     <div class="mt-3">
